@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  companyName   String
+  contactPerson String
+  email         String    @unique
+  phone         String
+  password      String
+  role          String    // "exhibitor" or "sponsor"
+  description   String?   @db.Text
+  website       String?
+  logoUrl       String?
+  category      String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  booths   Booth[]
+  invoices Invoice[]
+}
+
+model Booth {
+  id        String   @id @default(cuid())
+  boothCode String   @unique
+  section   String
+  price     Decimal  @db.Decimal(10, 2)
+  status    String   @default("Available") // Available, Reserved, Booked
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  invoices Invoice[]
+}
+
+model Invoice {
+  id            String   @id @default(cuid())
+  invoiceNumber String   @unique
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+  boothId       String
+  booth         Booth    @relation(fields: [boothId], references: [id])
+  amount        Decimal  @db.Decimal(10, 2)
+  status        String   @default("Pending") // Pending, Paid, Cancelled
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  payments Payment[]
+}
+
+model Payment {
+  id              String   @id @default(cuid())
+  invoiceId       String
+  invoice         Invoice  @relation(fields: [invoiceId], references: [id])
+  method          String   // "mpesa" or "bank"
+  transactionCode String
+  receiptUrl      String?
+  status          String   @default("Pending") // Pending, Verified, Rejected
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
