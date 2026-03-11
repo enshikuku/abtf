@@ -1,0 +1,211 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import Image from "next/image";
+import {
+    CheckCircleIcon,
+    XCircleIcon,
+    Loader2Icon,
+    ArrowLeftIcon,
+    EyeIcon,
+} from "lucide-react";
+
+interface Payment {
+    id: string;
+    method: string;
+    transactionCode: string | null;
+    proofImageUrl: string | null;
+    notes: string | null;
+    status: string;
+    submittedAt: string;
+    invoice: {
+        id: string;
+        invoiceNumber: string;
+        totalAmount: string;
+        status: string;
+        user: { id: string; name: string; companyName: string; email: string };
+        items: { booth: { name: string; section: string } }[];
+    };
+}
+
+export default function AdminPaymentsPage() {
+    const [payments, setPayments] = useState<Payment[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [acting, setActing] = useState<string | null>(null);
+    const [previewImage, setPreviewImage] = useState<string | null>(null);
+
+    const fetchPayments = () => {
+        fetch("/api/admin/payments")
+            .then((r) => r.json())
+            .then((data) => {
+                if (Array.isArray(data)) setPayments(data);
+                setLoading(false);
+            })
+            .catch(() => setLoading(false));
+    };
+
+    useEffect(() => { fetchPayments(); }, []);
+
+    const handleAction = async (paymentId: string, action: "VERIFIED" | "REJECTED") => {
+        setActing(paymentId);
+        try {
+            const res = await fetch("/api/admin/payments", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ paymentId, action }),
+            });
+            if (res.ok) {
+                fetchPayments();
+            }
+        } finally {
+            setActing(null);
+        }
+    };
+
+    const pending = payments.filter((p) => p.status === "SUBMITTED");
+    const processed = payments.filter((p) => p.status !== "SUBMITTED");
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <Loader2Icon className="h-8 w-8 animate-spin text-maroon" />
+            </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-gray-50 py-24 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-6xl mx-auto">
+                <div className="mb-8 flex items-center gap-4">
+                    <Link href="/admin" className="text-gray-400 hover:text-maroon transition-colors">
+                        <ArrowLeftIcon className="h-5 w-5" />
+                    </Link>
+                    <h1 className="text-2xl font-bold text-deepBlue font-poppins">Payment Verification</h1>
+                </div>
+
+                {/* Pending */}
+                <h2 className="text-lg font-bold text-deepBlue mb-4">
+                    Pending Verification ({pending.length})
+                </h2>
+                {pending.length === 0 ? (
+                    <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-500 mb-10">
+                        No pending payments to verify.
+                    </div>
+                ) : (
+                    <div className="space-y-4 mb-10">
+                        {pending.map((p) => (
+                            <div key={p.id} className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+                                <div className="flex flex-col lg:flex-row lg:items-start gap-6">
+                                    <div className="flex-1 space-y-2">
+                                        <div className="flex items-center gap-3 flex-wrap">
+                                            <span className="font-bold text-deepBlue text-lg">{p.invoice.invoiceNumber}</span>
+                                            <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-bold rounded-full">PENDING</span>
+                                        </div>
+                                        <p className="text-gray-700">
+                                            <span className="font-medium">{p.invoice.user.companyName}</span>
+                                            <span className="text-gray-400 ml-2">({p.invoice.user.email})</span>
+                                        </p>
+                                        <p className="text-sm text-gray-500">
+                                            Method: <span className="font-medium">{p.method}</span>
+                                            {p.transactionCode && <> &mdash; Code: <span className="font-medium">{p.transactionCode}</span></>}
+                                        </p>
+                                        <p className="text-sm text-gray-500">
+                                            Booths: {p.invoice.items.map((i) => i.booth.name).join(", ")}
+                                        </p>
+                                        <p className="text-lg font-bold text-maroon">
+                                            KES {Number(p.invoice.totalAmount).toLocaleString()}
+                                        </p>
+                                        {p.notes && <p className="text-sm text-gray-500 italic">Note: {p.notes}</p>}
+                                    </div>
+
+                                    <div className="flex flex-col items-center gap-3">
+                                        {p.proofImageUrl && (
+                                            <button
+                                                onClick={() => setPreviewImage(p.proofImageUrl)}
+                                                className="text-sm text-blue-600 hover:text-blue-800 flex items-center gap-1"
+                                            >
+                                                <EyeIcon className="h-4 w-4" /> View Proof
+                                            </button>
+                                        )}
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => handleAction(p.id, "VERIFIED")}
+                                                disabled={acting === p.id}
+                                                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center gap-1 text-sm font-medium disabled:opacity-50"
+                                            >
+                                                {acting === p.id ? <Loader2Icon className="h-4 w-4 animate-spin" /> : <CheckCircleIcon className="h-4 w-4" />}
+                                                Approve
+                                            </button>
+                                            <button
+                                                onClick={() => handleAction(p.id, "REJECTED")}
+                                                disabled={acting === p.id}
+                                                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg flex items-center gap-1 text-sm font-medium disabled:opacity-50"
+                                            >
+                                                <XCircleIcon className="h-4 w-4" /> Reject
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                )}
+
+                {/* Processed */}
+                {processed.length > 0 && (
+                    <>
+                        <h2 className="text-lg font-bold text-deepBlue mb-4">Processed ({processed.length})</h2>
+                        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                            <table className="w-full text-sm">
+                                <thead className="bg-gray-50 border-b">
+                                    <tr>
+                                        <th className="text-left px-4 py-3 font-medium text-gray-600">Invoice</th>
+                                        <th className="text-left px-4 py-3 font-medium text-gray-600">Company</th>
+                                        <th className="text-left px-4 py-3 font-medium text-gray-600">Amount</th>
+                                        <th className="text-left px-4 py-3 font-medium text-gray-600">Method</th>
+                                        <th className="text-left px-4 py-3 font-medium text-gray-600">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-100">
+                                    {processed.map((p) => (
+                                        <tr key={p.id}>
+                                            <td className="px-4 py-3 font-medium">{p.invoice.invoiceNumber}</td>
+                                            <td className="px-4 py-3">{p.invoice.user.companyName}</td>
+                                            <td className="px-4 py-3">KES {Number(p.invoice.totalAmount).toLocaleString()}</td>
+                                            <td className="px-4 py-3">{p.method}</td>
+                                            <td className="px-4 py-3">
+                                                <span className={`px-2 py-1 rounded-full text-xs font-bold ${p.status === "VERIFIED" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+                                                    }`}>{p.status}</span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </>
+                )}
+
+                {/* Image Preview Modal */}
+                {previewImage && (
+                    <div
+                        className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+                        onClick={() => setPreviewImage(null)}
+                    >
+                        <div className="max-w-3xl max-h-[90vh] bg-white rounded-xl overflow-hidden shadow-2xl" onClick={(e) => e.stopPropagation()}>
+                            <div className="flex justify-between items-center p-4 border-b">
+                                <span className="font-bold text-deepBlue">Payment Proof</span>
+                                <button onClick={() => setPreviewImage(null)} className="text-gray-400 hover:text-gray-600">
+                                    <XCircleIcon className="h-5 w-5" />
+                                </button>
+                            </div>
+                            <div className="p-4">
+                                <img src={previewImage} alt="Payment proof" className="max-w-full max-h-[70vh] object-contain mx-auto" />
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+        </div>
+    );
+}
