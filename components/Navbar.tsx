@@ -147,10 +147,26 @@ export function Navbar() {
             <div className="flex items-center gap-3 ml-2">
               {user ? (
                 <>
-                  <Dropdown
-                    label="Register"
-                    items={registerItems}
-                  />
+                  <Link
+                    href="/booths"
+                    className="text-deepBlue hover:text-maroon transition-colors text-sm font-medium font-inter"
+                  >
+                    Booths
+                  </Link>
+                  <Link
+                    href="/invoice-preview"
+                    className="text-deepBlue hover:text-maroon transition-colors text-sm font-medium font-inter"
+                  >
+                    My Invoices
+                  </Link>
+                  {user.role === "ADMIN" && (
+                    <Link
+                      href="/admin"
+                      className="text-maroon hover:text-gold transition-colors text-sm font-bold font-inter"
+                    >
+                      Admin
+                    </Link>
+                  )}
                   <span className="text-xs text-gray-500 font-inter flex items-center gap-1">
                     <UserIcon className="h-3.5 w-3.5" />
                     {user.companyName}
@@ -301,6 +317,29 @@ export function Navbar() {
           <div className="pt-3 space-y-2">
             {user ? (
               <>
+                <Link
+                  href="/booths"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block text-deepBlue hover:text-maroon py-2 text-base font-medium font-inter"
+                >
+                  Select Booths
+                </Link>
+                <Link
+                  href="/invoice-preview"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block text-deepBlue hover:text-maroon py-2 text-base font-medium font-inter"
+                >
+                  My Invoices
+                </Link>
+                {user.role === "ADMIN" && (
+                  <Link
+                    href="/admin"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block text-maroon hover:text-gold py-2 text-base font-bold font-inter"
+                  >
+                    Admin Dashboard
+                  </Link>
+                )}
                 <div className="text-xs text-gray-500 font-inter flex items-center gap-1 py-1">
                   <UserIcon className="h-3.5 w-3.5" />
                   Signed in as {user.companyName}
