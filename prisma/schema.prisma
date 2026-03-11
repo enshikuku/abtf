@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,62 +7,125 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  EXHIBITOR
+  SPONSOR
+  ADMIN
+}
+
+enum BoothStatus {
+  AVAILABLE
+  RESERVED
+  CONFIRMED
+}
+
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  EXPIRED
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PENDING_VERIFICATION
+  PAID
+  REJECTED
+}
+
+enum PaymentStatus {
+  SUBMITTED
+  VERIFIED
+  REJECTED
+}
+
+enum PaymentMethod {
+  MPESA
+  BANK
+  OTHER
+}
+
 model User {
-  id            String    @id @default(cuid())
-  companyName   String
-  contactPerson String
-  email         String    @unique
-  phone         String
-  password      String
-  role          String    // "exhibitor" or "sponsor"
-  description   String?   @db.Text
-  website       String?
-  logoUrl       String?
-  category      String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-
-  booths   Booth[]
-  invoices Invoice[]
-}
-
-model Booth {
-  id        String   @id @default(cuid())
-  boothCode String   @unique
-  section   String
-  price     Decimal  @db.Decimal(10, 2)
-  status    String   @default("Available") // Available, Reserved, Booked
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  invoices Invoice[]
-}
-
-model Invoice {
   id            String   @id @default(cuid())
-  invoiceNumber String   @unique
-  userId        String
-  user          User     @relation(fields: [userId], references: [id])
-  boothId       String
-  booth         Booth    @relation(fields: [boothId], references: [id])
-  amount        Decimal  @db.Decimal(10, 2)
-  status        String   @default("Pending") // Pending, Paid, Cancelled
+  name          String
+  email         String   @unique
+  password      String
+  role          Role     @default(EXHIBITOR)
+  companyName   String
+  phone         String
+  logoUrl       String?
+  description   String?  @db.Text
+  website       String?
+  category      String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
-  payments Payment[]
+  reservations Reservation[]
+  invoices     Invoice[]
+  booths       Booth[]
+}
+
+model Booth {
+  id           String      @id @default(cuid())
+  name         String      @unique
+  section      String
+  price        Decimal     @db.Decimal(10, 2)
+  status       BoothStatus @default(AVAILABLE)
+  reservedBy   String?
+  reservedUntil DateTime?
+  user         User?       @relation(fields: [reservedBy], references: [id])
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  reservations Reservation[]
+  invoiceItems InvoiceItem[]
+}
+
+model Reservation {
+  id        String            @id @default(cuid())
+  userId    String
+  boothId   String
+  invoiceId String?
+  status    ReservationStatus @default(PENDING)
+  user      User              @relation(fields: [userId], references: [id])
+  booth     Booth             @relation(fields: [boothId], references: [id])
+  invoice   Invoice?          @relation(fields: [invoiceId], references: [id])
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+model Invoice {
+  id            String        @id @default(cuid())
+  invoiceNumber String        @unique
+  userId        String
+  totalAmount   Decimal       @db.Decimal(10, 2)
+  status        InvoiceStatus @default(UNPAID)
+  user          User          @relation(fields: [userId], references: [id])
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  items        InvoiceItem[]
+  payments     Payment[]
+  reservations Reservation[]
+}
+
+model InvoiceItem {
+  id        String  @id @default(cuid())
+  invoiceId String
+  boothId   String
+  price     Decimal @db.Decimal(10, 2)
+  invoice   Invoice @relation(fields: [invoiceId], references: [id])
+  booth     Booth   @relation(fields: [boothId], references: [id])
 }
 
 model Payment {
-  id              String   @id @default(cuid())
+  id              String        @id @default(cuid())
   invoiceId       String
-  invoice         Invoice  @relation(fields: [invoiceId], references: [id])
-  method          String   // "mpesa" or "bank"
-  transactionCode String
-  receiptUrl      String?
-  status          String   @default("Pending") // Pending, Verified, Rejected
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  method          PaymentMethod
+  transactionCode String?
+  proofImageUrl   String?
+  notes           String?       @db.Text
+  status          PaymentStatus @default(SUBMITTED)
+  invoice         Invoice       @relation(fields: [invoiceId], references: [id])
+  submittedAt     DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 }
