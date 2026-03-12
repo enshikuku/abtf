@@ -117,22 +117,22 @@ export default function BoothsPage() {
             Select your preferred exhibition booths and generate an invoice.
           </p>
 
-          <div className="flex justify-center items-center gap-6 bg-white py-4 px-8 rounded-full shadow-sm inline-flex border border-gray-200">
+          <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-6 bg-white py-3 sm:py-4 px-4 sm:px-8 rounded-full shadow-sm border border-gray-200">
             <div className="flex items-center">
               <span className="w-3 h-3 rounded-full bg-green-500 mr-2"></span>
-              <span className="text-sm font-medium text-gray-700">Available</span>
+              <span className="text-xs sm:text-sm font-medium text-gray-700">Available</span>
             </div>
             <div className="flex items-center">
               <span className="w-3 h-3 rounded-full bg-orange-500 mr-2"></span>
-              <span className="text-sm font-medium text-gray-700">Reserved</span>
+              <span className="text-xs sm:text-sm font-medium text-gray-700">Reserved</span>
             </div>
             <div className="flex items-center">
               <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
-              <span className="text-sm font-medium text-gray-700">Payment Submitted</span>
+              <span className="text-xs sm:text-sm font-medium text-gray-700">Payment Submitted</span>
             </div>
             <div className="flex items-center">
               <span className="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
-              <span className="text-sm font-medium text-gray-700">Confirmed</span>
+              <span className="text-xs sm:text-sm font-medium text-gray-700">Confirmed</span>
             </div>
           </div>
         </div>
@@ -148,11 +148,11 @@ export default function BoothsPage() {
             const sectionBooths = booths.filter((b) => b.section === section);
             if (sectionBooths.length === 0) return null;
             return (
-              <div key={section} className="bg-white p-8 rounded-2xl shadow-md border border-gray-200">
-                <h2 className="text-2xl font-bold text-deepBlue font-poppins mb-6 pb-4 border-b border-gray-100">
+              <div key={section} className="bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-md border border-gray-200">
+                <h2 className="text-xl sm:text-2xl font-bold text-deepBlue font-poppins mb-6 pb-4 border-b border-gray-100">
                   {sectionLabels[section] || section}
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                   {sectionBooths.map((booth) => {
                     const isAvailable = booth.status === "AVAILABLE";
                     const isSelected = selected.has(booth.id);
@@ -209,8 +209,8 @@ export default function BoothsPage() {
 
         {/* Sticky bottom bar */}
         {selected.size > 0 && (
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl px-4 py-4 z-40">
-            <div className="max-w-7xl mx-auto flex items-center justify-between">
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-2xl px-4 py-3 sm:py-4 z-40">
+            <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
               <div>
                 <span className="text-sm text-gray-500 font-inter">
                   {selected.size} booth{selected.size > 1 ? "s" : ""} selected
