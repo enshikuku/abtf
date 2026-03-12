@@ -51,7 +51,7 @@ export default function RegisterExhibitorPage() {
         return;
       }
 
-      router.push("/booths");
+      router.push("/dashboard");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
