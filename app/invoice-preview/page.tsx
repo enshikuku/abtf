@@ -153,14 +153,14 @@ export default function InvoicePreviewPage() {
 
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Header */}
-          <div className="bg-deepBlue p-8 text-white flex justify-between items-center">
+          <div className="bg-deepBlue p-4 sm:p-6 md:p-8 text-white flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <div>
-              <h1 className="text-3xl font-bold font-poppins">Invoice Preview</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold font-poppins">Invoice Preview</h1>
               <p className="text-gray-300 mt-1 font-inter">Agri-Business Trade Fair 2026</p>
             </div>
-            <div className="text-right">
+            <div className="sm:text-right">
               <p className="text-sm text-gray-300 uppercase tracking-wider font-semibold">Invoice Number</p>
-              <p className="text-2xl font-bold text-gold font-poppins">{inv.invoiceNumber}</p>
+              <p className="text-xl sm:text-2xl font-bold text-gold font-poppins">{inv.invoiceNumber}</p>
               <span className={`inline-block mt-2 px-3 py-1 text-xs font-bold rounded-full ${statusColors[inv.status] || "bg-gray-100 text-gray-800"}`}>
                 {inv.status.replace(/_/g, " ")}
               </span>
@@ -168,7 +168,7 @@ export default function InvoicePreviewPage() {
           </div>
 
           {/* Details */}
-          <div className="p-8 border-b border-gray-200">
+          <div className="p-4 sm:p-6 md:p-8 border-b border-gray-200">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Invoice Date</h3>
@@ -196,7 +196,7 @@ export default function InvoicePreviewPage() {
           </div>
 
           {/* Payment Methods */}
-          <div className="p-8 bg-gray-50">
+          <div className="p-4 sm:p-6 md:p-8 bg-gray-50">
             <h3 className="text-lg font-bold text-deepBlue font-poppins mb-6 flex items-center">
               <CreditCardIcon className="w-6 h-6 mr-2 text-gold" />
               Payment Methods
@@ -229,7 +229,7 @@ export default function InvoicePreviewPage() {
                 <h4 className="font-bold text-deepBlue mb-3">Payment Submissions</h4>
                 <div className="space-y-2">
                   {inv.payments.map((p) => (
-                    <div key={p.id} className="bg-white p-3 rounded-lg border border-gray-200 flex justify-between items-center text-sm">
+                    <div key={p.id} className="bg-white p-3 rounded-lg border border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-2 text-sm">
                       <span>{p.method} - {new Date(p.submittedAt).toLocaleDateString()}</span>
                       <span className={`px-2 py-1 rounded-full text-xs font-bold ${p.status === "VERIFIED" ? "bg-green-100 text-green-800" :
                           p.status === "REJECTED" ? "bg-red-100 text-red-800" :
@@ -244,7 +244,7 @@ export default function InvoicePreviewPage() {
             <div className="flex flex-wrap gap-4 justify-end">
               <button
                 onClick={downloadPdf}
-                className="bg-deepBlue hover:bg-deepBlue/90 text-white font-bold py-4 px-8 rounded-lg transition-colors duration-300 flex items-center text-lg shadow-md"
+                className="bg-deepBlue hover:bg-deepBlue/90 text-white font-bold py-3 px-4 sm:py-4 sm:px-8 rounded-lg transition-colors duration-300 flex items-center text-sm sm:text-lg shadow-md"
               >
                 <DownloadIcon className="w-5 h-5 mr-2" />
                 Download PDF
@@ -252,7 +252,7 @@ export default function InvoicePreviewPage() {
               {(inv.status === "UNPAID" || inv.status === "REJECTED") && (
                 <Link
                   href={`/payment-proof?invoiceId=${inv.id}`}
-                  className="bg-maroon hover:bg-gold text-white font-bold py-4 px-8 rounded-lg transition-colors duration-300 flex items-center text-lg shadow-md"
+                  className="bg-maroon hover:bg-gold text-white font-bold py-3 px-4 sm:py-4 sm:px-8 rounded-lg transition-colors duration-300 flex items-center text-sm sm:text-lg shadow-md"
                 >
                   <FileTextIcon className="w-5 h-5 mr-2" />
                   Upload Payment Proof
