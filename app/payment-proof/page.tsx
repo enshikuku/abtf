@@ -100,7 +100,7 @@ function PaymentProofForm() {
   if (success) {
     return (
       <div className="min-h-screen bg-gray-50 py-24 px-4">
-        <div className="max-w-lg mx-auto text-center bg-white rounded-2xl shadow-xl p-12">
+        <div className="max-w-lg mx-auto text-center bg-white rounded-2xl shadow-xl p-6 sm:p-12">
           <CheckCircleIcon className="h-16 w-16 text-green-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-deepBlue font-poppins mb-2">Payment Submitted!</h1>
           <p className="text-gray-600 mb-8">
@@ -120,7 +120,7 @@ function PaymentProofForm() {
   if (invoices.length === 0) {
     return (
       <div className="min-h-screen bg-gray-50 py-24 px-4">
-        <div className="max-w-lg mx-auto text-center bg-white rounded-2xl shadow-xl p-12">
+        <div className="max-w-lg mx-auto text-center bg-white rounded-2xl shadow-xl p-6 sm:p-12">
           <AlertCircleIcon className="h-16 w-16 text-gray-300 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-deepBlue font-poppins mb-2">No Pending Invoices</h1>
           <p className="text-gray-600 mb-8">All your invoices have been paid or are pending verification.</p>
@@ -140,8 +140,8 @@ function PaymentProofForm() {
   return (
     <div className="min-h-screen bg-gray-50 py-24 px-4 sm:px-6 lg:px-8">
       <div className="max-w-2xl mx-auto bg-white rounded-2xl shadow-xl overflow-hidden">
-        <div className="bg-deepBlue py-8 px-8 text-center">
-          <h1 className="text-3xl font-bold text-white font-poppins">Submit Payment Proof</h1>
+        <div className="bg-deepBlue py-6 sm:py-8 px-4 sm:px-8 text-center">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white font-poppins">Submit Payment Proof</h1>
           {selectedInvoice && (
             <p className="text-gray-300 mt-2 font-inter">
               Invoice: {selectedInvoice.invoiceNumber} &mdash; KES {Number(selectedInvoice.totalAmount).toLocaleString()}
@@ -150,12 +150,12 @@ function PaymentProofForm() {
         </div>
 
         {error && (
-          <div className="mx-8 mt-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
+          <div className="mx-4 sm:mx-6 md:mx-8 mt-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="p-8 space-y-6">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 md:p-8 space-y-6">
           {/* Invoice selector */}
           {invoices.length > 1 && (
             <div>
