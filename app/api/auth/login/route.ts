@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { signToken } from "@/lib/auth";
+import { createSession } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
 	try {
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
 		}
 
-		const token = await signToken({
+		const token = await createSession({
 			id: user.id,
 			email: user.email,
 			companyName: user.companyName,
