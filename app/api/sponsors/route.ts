@@ -4,7 +4,7 @@ import path from "path";
 import { writeFile, mkdir } from "fs/promises";
 import { randomUUID } from "crypto";
 import bcrypt from "bcryptjs";
-import { signToken } from "@/lib/auth";
+import { createSession } from "@/lib/auth";
 
 export async function GET() {
 	try {
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
 			},
 		});
 
-		const token = await signToken({
+		const token = await createSession({
 			id: sponsor.id,
 			email: sponsor.email,
 			companyName: sponsor.companyName,
