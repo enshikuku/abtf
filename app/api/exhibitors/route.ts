@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { signToken } from "@/lib/auth";
+import { createSession } from "@/lib/auth";
 
 export async function GET() {
 	try {
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
 			},
 		});
 
-		const token = await signToken({
+		const token = await createSession({
 			id: exhibitor.id,
 			email: exhibitor.email,
 			companyName: exhibitor.companyName,
