@@ -254,10 +254,10 @@ export default function DashboardPage() {
 
 				{/* =================== PROFILE SECTION =================== */}
 				<div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-					<div className="bg-deepBlue px-8 py-6">
-						<h2 className="text-xl font-bold text-white font-poppins">Registration Details</h2>
+					<div className="bg-deepBlue px-4 sm:px-6 md:px-8 py-4 sm:py-6">
+						<h2 className="text-lg sm:text-xl font-bold text-white font-poppins">Registration Details</h2>
 					</div>
-					<div className="p-8">
+					<div className="p-4 sm:p-6 md:p-8">
 						<div className="flex flex-col md:flex-row gap-8">
 							{user.role === "SPONSOR" && user.logoUrl && (
 								<div className="flex-shrink-0">
@@ -312,16 +312,16 @@ export default function DashboardPage() {
 
 				{/* =================== BOOTHS SECTION =================== */}
 				<div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-					<div className="bg-deepBlue px-8 py-6 flex justify-between items-center">
-						<h2 className="text-xl font-bold text-white font-poppins">Booth Reservations</h2>
+					<div className="bg-deepBlue px-4 sm:px-6 md:px-8 py-4 sm:py-6 flex flex-col sm:flex-row justify-between sm:items-center gap-3">
+						<h2 className="text-lg sm:text-xl font-bold text-white font-poppins">Booth Reservations</h2>
 						<Link
 							href="/booths"
-							className="bg-white/10 hover:bg-white/20 text-white text-sm px-4 py-2 rounded-lg transition-colors"
+							className="bg-white/10 hover:bg-white/20 text-white text-sm px-4 py-2 rounded-lg transition-colors text-center"
 						>
 							Reserve More Booths
 						</Link>
 					</div>
-					<div className="p-8">
+					<div className="p-4 sm:p-6 md:p-8">
 						{booths.length === 0 ? (
 							<div className="text-center py-12">
 								<LayoutGridIcon className="h-12 w-12 text-gray-300 mx-auto mb-4" />
@@ -401,7 +401,7 @@ export default function DashboardPage() {
 									className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden"
 								>
 									{/* Invoice Header */}
-									<div className="bg-deepBlue p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+									<div className="bg-deepBlue p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
 										<div>
 											<p className="text-sm text-gray-300 uppercase tracking-wider font-semibold">Invoice</p>
 											<p className="text-xl font-bold text-gold font-poppins">{inv.invoiceNumber}</p>
@@ -470,7 +470,7 @@ export default function DashboardPage() {
 														return (
 															<div
 																key={p.id}
-																className="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-100"
+																className="flex flex-col sm:flex-row sm:items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-100 gap-2"
 															>
 																<div className="flex items-center gap-3">
 																	{p.status === "VERIFIED" && <CheckCircleIcon className="h-4 w-4 text-green-600" />}
@@ -508,13 +508,13 @@ export default function DashboardPage() {
 
 				{/* =================== PAYMENT SECTION =================== */}
 				<div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
-					<div className="bg-deepBlue px-8 py-6">
-						<h2 className="text-xl font-bold text-white font-poppins">Submit Payment</h2>
+					<div className="bg-deepBlue px-4 sm:px-6 md:px-8 py-4 sm:py-6">
+						<h2 className="text-lg sm:text-xl font-bold text-white font-poppins">Submit Payment</h2>
 						<p className="text-gray-300 text-sm mt-1">Upload a payment screenshot or enter a transaction code</p>
 					</div>
 
 					{paySuccess ? (
-						<div className="p-12 text-center">
+						<div className="p-6 sm:p-12 text-center">
 							<CheckCircleIcon className="h-16 w-16 text-green-500 mx-auto mb-4" />
 							<h3 className="text-2xl font-bold text-deepBlue font-poppins mb-2">Payment Submitted!</h3>
 							<p className="text-gray-600 mb-6">
@@ -528,7 +528,7 @@ export default function DashboardPage() {
 							</button>
 						</div>
 					) : payableInvoices.length === 0 ? (
-						<div className="p-12 text-center">
+						<div className="p-6 sm:p-12 text-center">
 							<AlertCircleIcon className="h-12 w-12 text-gray-300 mx-auto mb-4" />
 							<p className="text-gray-500 mb-2">No unpaid invoices.</p>
 							<p className="text-sm text-gray-400">
@@ -536,7 +536,7 @@ export default function DashboardPage() {
 							</p>
 						</div>
 					) : (
-						<form onSubmit={handlePaymentSubmit} className="p-8 space-y-6">
+						<form onSubmit={handlePaymentSubmit} className="p-4 sm:p-6 md:p-8 space-y-6">
 							{payError && (
 								<div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
 									{payError}
