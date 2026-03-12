@@ -9,14 +9,14 @@ interface Booth {
   name: string;
   section: string;
   price: string;
-  status: "AVAILABLE" | "RESERVED" | "CONFIRMED";
+  status: "AVAILABLE" | "RESERVED" | "PAYMENT_SUBMITTED" | "CONFIRMED";
 }
 
 const sectionLabels: Record<string, string> = {
-  Machinery: "Machinery Booths",
-  Crops: "Crops Booths",
-  Animals: "Animal Booths",
-  Food: "Food Booths",
+  machinery: "Machinery Booths",
+  crops: "Crops Booths",
+  animals: "Animal Booths",
+  food: "Food Booths",
 };
 
 export default function BoothsPage() {
@@ -69,7 +69,7 @@ export default function BoothsPage() {
         setSubmitting(false);
         return;
       }
-      router.push("/invoice-preview");
+      router.push("/dashboard");
     } catch {
       setError("Network error");
       setSubmitting(false);
@@ -82,6 +82,7 @@ export default function BoothsPage() {
     switch (status) {
       case "AVAILABLE": return "bg-green-100 text-green-800";
       case "RESERVED": return "bg-orange-100 text-orange-800";
+      case "PAYMENT_SUBMITTED": return "bg-blue-100 text-blue-800";
       case "CONFIRMED": return "bg-red-100 text-red-800";
       default: return "bg-gray-100 text-gray-800";
     }
@@ -91,6 +92,7 @@ export default function BoothsPage() {
     switch (status) {
       case "AVAILABLE": return "bg-green-500";
       case "RESERVED": return "bg-orange-500";
+      case "PAYMENT_SUBMITTED": return "bg-blue-500";
       case "CONFIRMED": return "bg-red-500";
       default: return "bg-gray-500";
     }
@@ -125,6 +127,10 @@ export default function BoothsPage() {
               <span className="text-sm font-medium text-gray-700">Reserved</span>
             </div>
             <div className="flex items-center">
+              <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
+              <span className="text-sm font-medium text-gray-700">Payment Submitted</span>
+            </div>
+            <div className="flex items-center">
               <span className="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
               <span className="text-sm font-medium text-gray-700">Confirmed</span>
             </div>
@@ -155,10 +161,10 @@ export default function BoothsPage() {
                         key={booth.id}
                         onClick={() => isAvailable && toggleSelect(booth.id)}
                         className={`p-5 rounded-xl border-2 flex flex-col h-full transition-all ${isSelected
-                            ? "border-maroon bg-maroon/5 shadow-lg ring-2 ring-maroon/20"
-                            : isAvailable
-                              ? "border-gray-200 hover:border-maroon hover:shadow-lg cursor-pointer"
-                              : "border-gray-100 bg-gray-50 opacity-75"
+                          ? "border-maroon bg-maroon/5 shadow-lg ring-2 ring-maroon/20"
+                          : isAvailable
+                            ? "border-gray-200 hover:border-maroon hover:shadow-lg cursor-pointer"
+                            : "border-gray-100 bg-gray-50 opacity-75"
                           }`}
                       >
                         <div className="flex justify-between items-start mb-4">
@@ -172,7 +178,7 @@ export default function BoothsPage() {
                         </div>
                         <div className="mb-6">
                           <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-2 ${getStatusColor(booth.status)}`}>
-                            {isSelected ? "Selected" : booth.status === "AVAILABLE" ? "Available" : booth.status === "RESERVED" ? "Reserved" : "Confirmed"}
+                            {isSelected ? "Selected" : booth.status === "AVAILABLE" ? "Available" : booth.status === "RESERVED" ? "Reserved" : booth.status === "PAYMENT_SUBMITTED" ? "Payment Submitted" : "Confirmed"}
                           </span>
                           <p className="text-lg font-bold text-gray-800 font-inter">
                             KES {Number(booth.price).toLocaleString()}
@@ -181,8 +187,8 @@ export default function BoothsPage() {
                         <div className="mt-auto">
                           {isAvailable ? (
                             <span className={`w-full font-semibold py-2.5 rounded-lg block text-center text-sm ${isSelected
-                                ? "bg-maroon text-white"
-                                : "bg-gray-100 text-gray-600"
+                              ? "bg-maroon text-white"
+                              : "bg-gray-100 text-gray-600"
                               }`}>
                               {isSelected ? "✓ Selected" : "Click to select"}
                             </span>
