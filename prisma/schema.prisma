@@ -16,6 +16,7 @@ enum Role {
 enum BoothStatus {
   AVAILABLE
   RESERVED
+  PAYMENT_SUBMITTED
   CONFIRMED
 }
 
@@ -62,6 +63,17 @@ model User {
   reservations Reservation[]
   invoices     Invoice[]
   booths       Booth[]
+  sessions     Session[]
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
 }
 
 model Booth {
