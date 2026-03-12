@@ -81,7 +81,7 @@ export default function RegisterSponsorPage() {
         return;
       }
 
-      router.push("/sponsors");
+      router.push("/dashboard");
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
