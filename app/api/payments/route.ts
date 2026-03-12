@@ -43,6 +43,10 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: "Invoice ID and payment method are required" }, { status: 400 });
 		}
 
+		if (!transactionCode && (!proofImage || !(proofImage instanceof File) || proofImage.size === 0)) {
+			return NextResponse.json({ error: "Please provide a transaction code or upload payment proof" }, { status: 400 });
+		}
+
 		if (!["MPESA", "BANK", "OTHER"].includes(method)) {
 			return NextResponse.json({ error: "Invalid payment method" }, { status: 400 });
 		}
@@ -50,6 +54,7 @@ export async function POST(request: NextRequest) {
 		// Verify user owns this invoice
 		const invoice = await prisma.invoice.findFirst({
 			where: { id: invoiceId, userId: user.id },
+			include: { items: true },
 		});
 		if (!invoice) {
 			return NextResponse.json({ error: "Invoice not found" }, { status: 404 });
@@ -90,6 +95,13 @@ export async function POST(request: NextRequest) {
 			await tx.invoice.update({
 				where: { id: invoiceId },
 				data: { status: "PENDING_VERIFICATION" },
+			});
+
+			// Update booth statuses to PAYMENT_SUBMITTED
+			const boothIds = invoice.items.map((item) => item.boothId);
+			await tx.booth.updateMany({
+				where: { id: { in: boothIds }, status: "RESERVED" },
+				data: { status: "PAYMENT_SUBMITTED" },
 			});
 
 			return p;
