@@ -28,7 +28,11 @@ export default function LoginPage() {
                 return;
             }
 
-            router.push("/booths");
+            if (data.user?.role === "ADMIN") {
+                router.push("/admin");
+            } else {
+                router.push("/dashboard");
+            }
             router.refresh();
         } catch {
             setError("Something went wrong. Please try again.");
