@@ -9,10 +9,15 @@ export interface AuthUser {
 	email: string;
 	companyName: string;
 	role: string;
+	sessionId: string;
 }
 
-export async function signToken(user: AuthUser): Promise<string> {
-	return new SignJWT({ id: user.id, email: user.email, companyName: user.companyName, role: user.role }).setProtectedHeader({ alg: "HS256" }).setExpirationTime("7d").sign(secret);
+export async function createSession(user: { id: string; email: string; companyName: string; role: string }): Promise<string> {
+	const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+	const session = await prisma.session.create({
+		data: { userId: user.id, expiresAt },
+	});
+	return new SignJWT({ id: user.id, email: user.email, companyName: user.companyName, role: user.role, sessionId: session.id }).setProtectedHeader({ alg: "HS256" }).setExpirationTime("7d").sign(secret);
 }
 
 export async function verifyToken(token: string): Promise<AuthUser | null> {
@@ -28,7 +33,14 @@ export async function getAuthUser(): Promise<AuthUser | null> {
 	const cookieStore = await cookies();
 	const token = cookieStore.get("token")?.value;
 	if (!token) return null;
-	return verifyToken(token);
+	const user = await verifyToken(token);
+	if (!user?.sessionId) return null;
+
+	// Validate session exists in DB
+	const session = await prisma.session.findUnique({ where: { id: user.sessionId } });
+	if (!session || session.expiresAt < new Date()) return null;
+
+	return user;
 }
 
 export async function getAuthUserWithDb() {
