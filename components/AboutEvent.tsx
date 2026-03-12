@@ -73,7 +73,7 @@ export function AboutEvent() {
             <img
               src="https://images.unsplash.com/photo-1592982537447-6f2a6a0c6c13?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
               alt="Agricultural exhibition"
-              className="relative rounded-2xl shadow-xl w-full h-[500px] object-cover"
+              className="relative rounded-2xl shadow-xl w-full h-[300px] sm:h-[400px] md:h-[500px] object-cover"
             />
 
             {/* Floating Stats Card */}
