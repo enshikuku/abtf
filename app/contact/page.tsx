@@ -28,7 +28,7 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Contact Info */}
           <div className="lg:col-span-1 space-y-8">
-            <div className="bg-white p-8 rounded-2xl shadow-md border border-gray-100">
+            <div className="bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-md border border-gray-100">
               <h3 className="text-2xl font-bold text-deepBlue font-poppins mb-6">
                 Get in Touch
               </h3>
