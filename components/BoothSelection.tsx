@@ -69,8 +69,8 @@ export function BoothSelection() {
           </div>
         </div>
 
-        <div className="bg-white p-8 rounded-2xl shadow-lg border border-gray-200">
-          <div className="mb-6 pb-4 border-b border-gray-200 flex justify-between items-center">
+        <div className="bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200">
+          <div className="mb-6 pb-4 border-b border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
             <h3 className="text-xl font-bold text-deepBlue font-poppins">
               Main Exhibition Hall
             </h3>
@@ -79,7 +79,7 @@ export function BoothSelection() {
             </span>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
             {booths.map((booth) => (
               <div
                 key={booth.id}
