@@ -25,7 +25,7 @@ export async function PATCH(request: NextRequest) {
 	}
 
 	const { boothId, action } = await request.json();
-	if (!boothId || action !== "release") {
+	if (!boothId || !["release", "confirm"].includes(action)) {
 		return NextResponse.json({ error: "Invalid request" }, { status: 400 });
 	}
 
@@ -33,16 +33,28 @@ export async function PATCH(request: NextRequest) {
 		const booth = await tx.booth.findUnique({ where: { id: boothId } });
 		if (!booth) throw new Error("Booth not found");
 
-		await tx.booth.update({
-			where: { id: boothId },
-			data: { status: "AVAILABLE", reservedBy: null, reservedUntil: null },
-		});
+		if (action === "release") {
+			await tx.booth.update({
+				where: { id: boothId },
+				data: { status: "AVAILABLE", reservedBy: null, reservedUntil: null },
+			});
 
-		// Expire any pending reservations for this booth
-		await tx.reservation.updateMany({
-			where: { boothId, status: "PENDING" },
-			data: { status: "EXPIRED" },
-		});
+			// Expire any pending reservations for this booth
+			await tx.reservation.updateMany({
+				where: { boothId, status: "PENDING" },
+				data: { status: "EXPIRED" },
+			});
+		} else if (action === "confirm") {
+			await tx.booth.update({
+				where: { id: boothId },
+				data: { status: "CONFIRMED", reservedUntil: null },
+			});
+
+			await tx.reservation.updateMany({
+				where: { boothId, status: "PENDING" },
+				data: { status: "CONFIRMED" },
+			});
+		}
 	});
 
 	return NextResponse.json({ success: true });
