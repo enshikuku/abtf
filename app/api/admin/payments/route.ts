@@ -73,7 +73,13 @@ export async function PATCH(request: NextRequest) {
 			});
 			await tx.invoice.update({
 				where: { id: payment.invoiceId },
-				data: { status: "REJECTED" },
+				data: { status: "UNPAID" },
+			});
+			// Revert booth statuses from PAYMENT_SUBMITTED back to RESERVED
+			const boothIds = payment.invoice.items.map((i) => i.boothId);
+			await tx.booth.updateMany({
+				where: { id: { in: boothIds }, status: "PAYMENT_SUBMITTED" },
+				data: { status: "RESERVED" },
 			});
 		});
 	}
