@@ -15,6 +15,23 @@ export function Sponsors() {
           </p>
         </div>
 
+        {/* Platinum Sponsors */}
+        <div className="mb-16">
+          <h3 className="text-2xl font-bold text-center text-slate-700 font-poppins mb-8">
+            Platinum Sponsors
+          </h3>
+          <div className="flex flex-wrap justify-center gap-8">
+            {[1, 2].map((i) => (
+              <div
+                key={`platinum-${i}`}
+                className="w-72 h-36 bg-gray-50 border border-slate-200 rounded-xl shadow-sm flex items-center justify-center p-6 hover:shadow-md transition-shadow"
+              >
+                <div className="text-gray-400 font-inter font-medium text-lg">Logo Placeholder</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {/* Gold Sponsors */}
         <div className="mb-16">
           <h3 className="text-2xl font-bold text-center text-gold font-poppins mb-8">
