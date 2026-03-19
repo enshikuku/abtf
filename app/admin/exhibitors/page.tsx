@@ -8,6 +8,7 @@ interface Booth {
 	name: string;
 	section: string;
 	status: string;
+	audience: "EXHIBITOR" | "SPONSOR";
 }
 
 interface Invoice {
@@ -24,6 +25,7 @@ interface Exhibitor {
 	companyName: string;
 	phone: string;
 	category: string | null;
+	exhibitorCategory: string | null;
 	description: string | null;
 	createdAt: string;
 	booths: Booth[];
@@ -185,7 +187,7 @@ export default function AdminExhibitorsPage() {
 								</div>
 								<div>
 									<label className="text-xs font-bold text-gray-400 uppercase">Category</label>
-									<p className="text-deepBlue font-medium mt-1 capitalize">{selectedExhibitor.category || "—"}</p>
+									<p className="text-deepBlue font-medium mt-1 capitalize">{selectedExhibitor.exhibitorCategory || selectedExhibitor.category || "—"}</p>
 								</div>
 								<div className="col-span-2">
 									<label className="text-xs font-bold text-gray-400 uppercase">Registered</label>
@@ -210,12 +212,14 @@ export default function AdminExhibitorsPage() {
 											<div key={b.id} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-100">
 												<span className="font-medium text-deepBlue">{b.name}</span>
 												<div className="flex items-center gap-2">
-													<span className="text-xs text-gray-500 capitalize">{b.section}</span>
-													<span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-														b.status === "CONFIRMED" ? "bg-green-100 text-green-800" :
+													<span className="text-xs text-gray-500 capitalize">
+														{b.section}
+														{b.audience === "SPONSOR" ? " (sponsor booth)" : ""}
+													</span>
+													<span className={`px-2 py-0.5 rounded-full text-xs font-bold ${b.status === "CONFIRMED" ? "bg-green-100 text-green-800" :
 														b.status === "RESERVED" ? "bg-orange-100 text-orange-800" :
-														"bg-blue-100 text-blue-800"
-													}`}>{b.status.replace(/_/g, " ")}</span>
+															"bg-blue-100 text-blue-800"
+														}`}>{b.status.replace(/_/g, " ")}</span>
 												</div>
 											</div>
 										))}
