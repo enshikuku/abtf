@@ -9,6 +9,8 @@ interface Booth {
 	name: string;
 	section: string;
 	status: string;
+	audience: "EXHIBITOR" | "SPONSOR";
+	sponsorLevel: "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | null;
 }
 
 interface Invoice {
@@ -24,6 +26,7 @@ interface Sponsor {
 	email: string;
 	companyName: string;
 	phone: string;
+	sponsorLevel: "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | null;
 	website: string | null;
 	logoUrl: string | null;
 	description: string | null;
@@ -36,6 +39,7 @@ export default function AdminSponsorsPage() {
 	const [sponsors, setSponsors] = useState<Sponsor[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [search, setSearch] = useState("");
+	const [levelFilter, setLevelFilter] = useState("ALL");
 	const [selectedSponsor, setSelectedSponsor] = useState<Sponsor | null>(null);
 
 	useEffect(() => {
@@ -49,6 +53,7 @@ export default function AdminSponsorsPage() {
 	}, []);
 
 	const filtered = sponsors.filter((s) => {
+		if (levelFilter !== "ALL" && s.sponsorLevel !== levelFilter) return false;
 		if (!search) return true;
 		const q = search.toLowerCase();
 		return (
@@ -86,15 +91,28 @@ export default function AdminSponsorsPage() {
 
 			{/* Search */}
 			<div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
-				<div className="relative">
-					<SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-					<input
-						type="text"
-						placeholder="Search by name, company, or email..."
-						value={search}
-						onChange={(e) => setSearch(e.target.value)}
-						className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-maroon focus:border-transparent outline-none"
-					/>
+				<div className="flex flex-col sm:flex-row gap-3">
+					<div className="relative flex-1">
+						<SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+						<input
+							type="text"
+							placeholder="Search by name, company, or email..."
+							value={search}
+							onChange={(e) => setSearch(e.target.value)}
+							className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-maroon focus:border-transparent outline-none"
+						/>
+					</div>
+					<select
+						value={levelFilter}
+						onChange={(e) => setLevelFilter(e.target.value)}
+						className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-maroon focus:border-transparent outline-none"
+					>
+						<option value="ALL">All Sponsor Categories</option>
+						<option value="PLATINUM">Platinum</option>
+						<option value="GOLD">Gold</option>
+						<option value="SILVER">Silver</option>
+						<option value="BRONZE">Bronze</option>
+					</select>
 				</div>
 			</div>
 
@@ -112,6 +130,7 @@ export default function AdminSponsorsPage() {
 									<th className="text-left px-4 py-3 font-medium text-gray-600">Company</th>
 									<th className="text-left px-4 py-3 font-medium text-gray-600">Contact Person</th>
 									<th className="text-left px-4 py-3 font-medium text-gray-600">Email</th>
+									<th className="text-left px-4 py-3 font-medium text-gray-600">Category</th>
 									<th className="text-left px-4 py-3 font-medium text-gray-600">Booths</th>
 									<th className="text-left px-4 py-3 font-medium text-gray-600">Invoice Status</th>
 									<th className="text-right px-4 py-3 font-medium text-gray-600">Action</th>
@@ -140,6 +159,15 @@ export default function AdminSponsorsPage() {
 											<td className="px-4 py-3 font-bold text-deepBlue">{s.companyName}</td>
 											<td className="px-4 py-3">{s.name}</td>
 											<td className="px-4 py-3 text-gray-600">{s.email}</td>
+											<td className="px-4 py-3">
+												{s.sponsorLevel ? (
+													<span className="px-2 py-1 rounded-full text-xs font-bold bg-purple-100 text-purple-800">
+														{s.sponsorLevel}
+													</span>
+												) : (
+													<span className="text-gray-400 text-xs">Not set</span>
+												)}
+											</td>
 											<td className="px-4 py-3">
 												{s.booths.length > 0 ? (
 													<span className="text-xs font-medium">
@@ -213,6 +241,10 @@ export default function AdminSponsorsPage() {
 									<p className="text-deepBlue font-medium mt-1">{selectedSponsor.phone}</p>
 								</div>
 								<div>
+									<label className="text-xs font-bold text-gray-400 uppercase">Sponsor Category</label>
+									<p className="text-deepBlue font-medium mt-1">{selectedSponsor.sponsorLevel || "—"}</p>
+								</div>
+								<div>
 									<label className="text-xs font-bold text-gray-400 uppercase">Website</label>
 									<p className="text-deepBlue font-medium mt-1">{selectedSponsor.website || "—"}</p>
 								</div>
@@ -239,12 +271,14 @@ export default function AdminSponsorsPage() {
 											<div key={b.id} className="flex items-center justify-between bg-gray-50 p-3 rounded-lg border border-gray-100">
 												<span className="font-medium text-deepBlue">{b.name}</span>
 												<div className="flex items-center gap-2">
-													<span className="text-xs text-gray-500 capitalize">{b.section}</span>
-													<span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-														b.status === "CONFIRMED" ? "bg-green-100 text-green-800" :
+													<span className="text-xs text-gray-500 capitalize">
+														{b.section}
+														{b.audience === "SPONSOR" && b.sponsorLevel ? ` (${b.sponsorLevel.toLowerCase()})` : ""}
+													</span>
+													<span className={`px-2 py-0.5 rounded-full text-xs font-bold ${b.status === "CONFIRMED" ? "bg-green-100 text-green-800" :
 														b.status === "RESERVED" ? "bg-orange-100 text-orange-800" :
-														"bg-blue-100 text-blue-800"
-													}`}>{b.status.replace(/_/g, " ")}</span>
+															"bg-blue-100 text-blue-800"
+														}`}>{b.status.replace(/_/g, " ")}</span>
 												</div>
 											</div>
 										))}
