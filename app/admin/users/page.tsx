@@ -24,6 +24,8 @@ interface UserItem {
 	companyName: string;
 	phone: string;
 	category: string | null;
+	exhibitorCategory: string | null;
+	sponsorLevel: "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | null;
 	createdAt: string;
 	_count: {
 		booths: number;
@@ -264,10 +266,12 @@ export default function AdminUsersPage() {
 									<BuildingIcon className="h-4 w-4 text-gray-400" />
 									{selectedUser.companyName}
 								</div>
-								{selectedUser.category && (
+								{(selectedUser.exhibitorCategory || selectedUser.category || selectedUser.sponsorLevel) && (
 									<div className="flex items-center gap-2 text-gray-600">
 										<UsersIcon className="h-4 w-4 text-gray-400" />
-										{selectedUser.category}
+										{selectedUser.role === "SPONSOR"
+											? `Sponsor Category: ${selectedUser.sponsorLevel || "Not set"}`
+											: `Exhibitor Category: ${selectedUser.exhibitorCategory || selectedUser.category || "Not set"}`}
 									</div>
 								)}
 								<div className="flex items-center gap-2 text-gray-600">
