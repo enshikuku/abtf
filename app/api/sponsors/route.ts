@@ -6,6 +6,8 @@ import { randomUUID } from "crypto";
 import bcrypt from "bcryptjs";
 import { createSession } from "@/lib/auth";
 
+const SPONSOR_LEVELS = ["PLATINUM", "GOLD", "SILVER", "BRONZE"] as const;
+
 export async function GET() {
 	try {
 		const sponsors = await prisma.user.findMany({
@@ -19,6 +21,7 @@ export async function GET() {
 				website: true,
 				logoUrl: true,
 				description: true,
+				sponsorLevel: true,
 				createdAt: true,
 			},
 			orderBy: { createdAt: "desc" },
@@ -39,12 +42,17 @@ export async function POST(request: NextRequest) {
 		const email = formData.get("email") as string;
 		const phone = formData.get("phone") as string;
 		const password = formData.get("password") as string;
+		const sponsorLevel = formData.get("sponsorLevel") as string;
 		const website = formData.get("website") as string;
 		const description = formData.get("description") as string;
 		const logo = formData.get("logo") as File | null;
 
-		if (!companyName || !contactPerson || !email || !phone || !password || !website || !description) {
+		if (!companyName || !contactPerson || !email || !phone || !password || !website || !description || !sponsorLevel) {
 			return NextResponse.json({ error: "All fields are required" }, { status: 400 });
+		}
+
+		if (!SPONSOR_LEVELS.includes(sponsorLevel as (typeof SPONSOR_LEVELS)[number])) {
+			return NextResponse.json({ error: "Invalid sponsor level selected" }, { status: 400 });
 		}
 
 		if (!logo || !(logo instanceof File)) {
@@ -93,6 +101,7 @@ export async function POST(request: NextRequest) {
 				password: hashedPassword,
 				website,
 				description,
+				sponsorLevel: sponsorLevel as "PLATINUM" | "GOLD" | "SILVER" | "BRONZE",
 				logoUrl,
 				role: "SPONSOR",
 			},
