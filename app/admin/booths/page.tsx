@@ -7,6 +7,8 @@ interface Booth {
 	id: string;
 	name: string;
 	section: string;
+	audience: "EXHIBITOR" | "SPONSOR";
+	sponsorLevel: "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | null;
 	price: string;
 	status: string;
 	reservedUntil: string | null;
@@ -20,6 +22,7 @@ export default function AdminBoothsPage() {
 	const [loading, setLoading] = useState(true);
 	const [acting, setActing] = useState<string | null>(null);
 	const [filterSection, setFilterSection] = useState("ALL");
+	const [filterAudience, setFilterAudience] = useState("ALL");
 	const [filterStatus, setFilterStatus] = useState("ALL");
 	const [search, setSearch] = useState("");
 
@@ -54,6 +57,7 @@ export default function AdminBoothsPage() {
 	const sections = ["ALL", ...new Set(booths.map((b) => b.section))];
 
 	const filtered = booths.filter((b) => {
+		if (filterAudience !== "ALL" && b.audience !== filterAudience) return false;
 		if (filterSection !== "ALL" && b.section !== filterSection) return false;
 		if (filterStatus !== "ALL" && b.status !== filterStatus) return false;
 		if (search) {
@@ -107,6 +111,15 @@ export default function AdminBoothsPage() {
 					/>
 				</div>
 				<select
+					value={filterAudience}
+					onChange={(e) => setFilterAudience(e.target.value)}
+					className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-maroon focus:border-transparent outline-none"
+				>
+					<option value="ALL">All Booth Types</option>
+					<option value="EXHIBITOR">Exhibitor Booths</option>
+					<option value="SPONSOR">Sponsor Booths</option>
+				</select>
+				<select
 					value={filterSection}
 					onChange={(e) => setFilterSection(e.target.value)}
 					className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-maroon focus:border-transparent outline-none"
@@ -140,6 +153,7 @@ export default function AdminBoothsPage() {
 						<thead className="bg-gray-50 border-b">
 							<tr>
 								<th className="text-left px-4 py-3 font-medium text-gray-600">Booth</th>
+								<th className="text-left px-4 py-3 font-medium text-gray-600">Type</th>
 								<th className="text-left px-4 py-3 font-medium text-gray-600">Section</th>
 								<th className="text-left px-4 py-3 font-medium text-gray-600">Price</th>
 								<th className="text-left px-4 py-3 font-medium text-gray-600">Status</th>
@@ -152,7 +166,15 @@ export default function AdminBoothsPage() {
 							{filtered.map((b) => (
 								<tr key={b.id} className="hover:bg-gray-50">
 									<td className="px-4 py-3 font-bold text-deepBlue">{b.name}</td>
-									<td className="px-4 py-3 capitalize">{b.section}</td>
+									<td className="px-4 py-3 text-xs">
+										<span className={`px-2 py-1 rounded-full font-bold ${b.audience === "SPONSOR" ? "bg-purple-100 text-purple-800" : "bg-blue-100 text-blue-800"}`}>
+											{b.audience}
+										</span>
+									</td>
+									<td className="px-4 py-3 capitalize">
+										{b.section}
+										{b.audience === "SPONSOR" && b.sponsorLevel ? ` (${b.sponsorLevel.toLowerCase()})` : ""}
+									</td>
 									<td className="px-4 py-3">KES {Number(b.price).toLocaleString()}</td>
 									<td className="px-4 py-3">
 										<span className={`px-2 py-1 rounded-full text-xs font-bold ${statusBadge(b.status)}`}>
@@ -191,7 +213,7 @@ export default function AdminBoothsPage() {
 							))}
 							{filtered.length === 0 && (
 								<tr>
-									<td colSpan={7} className="px-4 py-8 text-center text-gray-500">
+									<td colSpan={8} className="px-4 py-8 text-center text-gray-500">
 										No booths match your filters.
 									</td>
 								</tr>
