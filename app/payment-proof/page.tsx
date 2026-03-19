@@ -156,6 +156,11 @@ function PaymentProofForm() {
         )}
 
         <form onSubmit={handleSubmit} className="p-4 sm:p-6 md:p-8 space-y-6">
+          <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            Selected booths are reserved for 7 days only. Payment must be completed within this period to confirm
+            the booking. Unpaid reservations will expire automatically and the booth will become available again.
+          </div>
+
           {/* Invoice selector */}
           {invoices.length > 1 && (
             <div>
