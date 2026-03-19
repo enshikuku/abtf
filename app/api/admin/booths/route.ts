@@ -12,7 +12,7 @@ export async function GET() {
 		include: {
 			user: { select: { id: true, name: true, companyName: true, email: true } },
 		},
-		orderBy: [{ section: "asc" }, { name: "asc" }],
+		orderBy: [{ audience: "asc" }, { section: "asc" }, { name: "asc" }],
 	});
 
 	return NextResponse.json(booths);
