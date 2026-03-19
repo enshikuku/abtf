@@ -25,6 +25,8 @@ interface UserProfile {
 	phone: string;
 	role: "EXHIBITOR" | "SPONSOR";
 	category: string | null;
+	exhibitorCategory: string | null;
+	sponsorLevel: "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | null;
 	logoUrl: string | null;
 }
 
@@ -32,6 +34,8 @@ interface BoothReservation {
 	id: string;
 	name: string;
 	section: string;
+	audience: "EXHIBITOR" | "SPONSOR";
+	sponsorLevel: "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | null;
 	price: string;
 	status: "AVAILABLE" | "RESERVED" | "PAYMENT_SUBMITTED" | "CONFIRMED";
 	reservedUntil: string | null;
@@ -40,7 +44,7 @@ interface BoothReservation {
 interface InvoiceItem {
 	id: string;
 	price: string;
-	booth: { name: string; section: string };
+	booth: { name: string; section: string; audience: "EXHIBITOR" | "SPONSOR"; sponsorLevel: "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | null };
 }
 
 interface Payment {
@@ -290,19 +294,22 @@ export default function DashboardPage() {
 								<div>
 									<label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Role</label>
 									<p className="mt-1">
-										<span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${
-											user.role === "EXHIBITOR"
-												? "bg-blue-100 text-blue-800"
-												: "bg-purple-100 text-purple-800"
-										}`}>
+										<span className={`inline-block px-3 py-1 rounded-full text-sm font-bold ${user.role === "EXHIBITOR"
+											? "bg-blue-100 text-blue-800"
+											: "bg-purple-100 text-purple-800"
+											}`}>
 											{user.role}
 										</span>
 									</p>
 								</div>
-								{user.category && (
+								{(user.sponsorLevel || user.exhibitorCategory || user.category) && (
 									<div>
-										<label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Category</label>
-										<p className="text-lg text-deepBlue font-medium mt-1 capitalize">{user.category}</p>
+										<label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+											{user.role === "SPONSOR" ? "Sponsor Category" : "Exhibitor Category"}
+										</label>
+										<p className="text-lg text-deepBlue font-medium mt-1 capitalize">
+											{(user.role === "SPONSOR" ? user.sponsorLevel : user.exhibitorCategory || user.category)?.toLowerCase()}
+										</p>
 									</div>
 								)}
 							</div>
@@ -322,6 +329,10 @@ export default function DashboardPage() {
 						</Link>
 					</div>
 					<div className="p-4 sm:p-6 md:p-8">
+						<div className="mb-5 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+							Selected booths are reserved for 7 days only. Payment must be completed within this period to confirm
+							the booking. Unpaid reservations expire automatically and the booth is released.
+						</div>
 						{booths.length === 0 ? (
 							<div className="text-center py-12">
 								<LayoutGridIcon className="h-12 w-12 text-gray-300 mx-auto mb-4" />
@@ -351,7 +362,10 @@ export default function DashboardPage() {
 											return (
 												<tr key={booth.id} className="hover:bg-gray-50">
 													<td className="px-4 py-3 font-bold text-deepBlue">{booth.name}</td>
-													<td className="px-4 py-3 text-gray-700 capitalize">{booth.section}</td>
+													<td className="px-4 py-3 text-gray-700 capitalize">
+														{booth.section}
+														{booth.audience === "SPONSOR" && booth.sponsorLevel ? ` (${booth.sponsorLevel.toLowerCase()})` : ""}
+													</td>
 													<td className="px-4 py-3 font-medium text-gray-800">
 														KES {Number(booth.price).toLocaleString()}
 													</td>
@@ -363,10 +377,10 @@ export default function DashboardPage() {
 													<td className="px-4 py-3 text-gray-500">
 														{booth.reservedUntil
 															? new Date(booth.reservedUntil).toLocaleDateString("en-GB", {
-																	day: "numeric",
-																	month: "short",
-																	year: "numeric",
-															  })
+																day: "numeric",
+																month: "short",
+																year: "numeric",
+															})
 															: "—"}
 													</td>
 												</tr>
