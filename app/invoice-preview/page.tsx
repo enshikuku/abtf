@@ -7,7 +7,13 @@ import { FileTextIcon, BuildingIcon, CreditCardIcon, DownloadIcon, Loader2Icon }
 interface InvoiceItem {
   id: string;
   price: string;
-  booth: { id: string; name: string; section: string };
+  booth: {
+    id: string;
+    name: string;
+    section: string;
+    audience: "EXHIBITOR" | "SPONSOR";
+    sponsorLevel: "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | null;
+  };
 }
 
 interface Payment {
@@ -169,6 +175,10 @@ export default function InvoicePreviewPage() {
 
           {/* Details */}
           <div className="p-4 sm:p-6 md:p-8 border-b border-gray-200">
+            <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+              Selected booths are reserved for 7 days only. Payment must be completed within this period to confirm
+              the booking. Unpaid reservations will expire automatically and the booth will become available again.
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div>
                 <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Invoice Date</h3>
@@ -181,7 +191,10 @@ export default function InvoicePreviewPage() {
                     <div key={item.id} className="flex justify-between">
                       <div>
                         <span className="font-bold text-deepBlue">{item.booth.name}</span>
-                        <span className="text-gray-500 text-sm ml-2">({item.booth.section})</span>
+                        <span className="text-gray-500 text-sm ml-2">
+                          ({item.booth.section}
+                          {item.booth.audience === "SPONSOR" && item.booth.sponsorLevel ? ` - ${item.booth.sponsorLevel.toLowerCase()}` : ""})
+                        </span>
                       </div>
                       <span className="font-bold text-gray-800">KES {Number(item.price).toLocaleString()}</span>
                     </div>
@@ -232,8 +245,8 @@ export default function InvoicePreviewPage() {
                     <div key={p.id} className="bg-white p-3 rounded-lg border border-gray-200 flex flex-col sm:flex-row justify-between sm:items-center gap-2 text-sm">
                       <span>{p.method} - {new Date(p.submittedAt).toLocaleDateString()}</span>
                       <span className={`px-2 py-1 rounded-full text-xs font-bold ${p.status === "VERIFIED" ? "bg-green-100 text-green-800" :
-                          p.status === "REJECTED" ? "bg-red-100 text-red-800" :
-                            "bg-yellow-100 text-yellow-800"
+                        p.status === "REJECTED" ? "bg-red-100 text-red-800" :
+                          "bg-yellow-100 text-yellow-800"
                         }`}>{p.status}</span>
                     </div>
                   ))}
