@@ -19,6 +19,8 @@ export async function GET() {
 				phone: true,
 				role: true,
 				category: true,
+				exhibitorCategory: true,
+				sponsorLevel: true,
 				logoUrl: true,
 			},
 		});
@@ -33,6 +35,8 @@ export async function GET() {
 				id: true,
 				name: true,
 				section: true,
+				audience: true,
+				sponsorLevel: true,
 				price: true,
 				status: true,
 				reservedUntil: true,
@@ -43,7 +47,7 @@ export async function GET() {
 		const invoices = await prisma.invoice.findMany({
 			where: { userId: user.id },
 			include: {
-				items: { include: { booth: { select: { name: true, section: true } } } },
+				items: { include: { booth: { select: { name: true, section: true, audience: true, sponsorLevel: true } } } },
 				payments: {
 					orderBy: { submittedAt: "desc" },
 				},
