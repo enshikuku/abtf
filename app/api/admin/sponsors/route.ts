@@ -16,12 +16,13 @@ export async function GET() {
 			email: true,
 			companyName: true,
 			phone: true,
+			sponsorLevel: true,
 			website: true,
 			logoUrl: true,
 			description: true,
 			createdAt: true,
 			booths: {
-				select: { id: true, name: true, section: true, status: true },
+				select: { id: true, name: true, section: true, status: true, audience: true, sponsorLevel: true },
 			},
 			invoices: {
 				select: { id: true, invoiceNumber: true, totalAmount: true, status: true },
