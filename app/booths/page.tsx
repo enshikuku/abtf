@@ -8,6 +8,8 @@ interface Booth {
   id: string;
   name: string;
   section: string;
+  audience: "EXHIBITOR" | "SPONSOR";
+  sponsorLevel: "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | null;
   price: string;
   status: "AVAILABLE" | "RESERVED" | "PAYMENT_SUBMITTED" | "CONFIRMED";
 }
@@ -17,6 +19,10 @@ const sectionLabels: Record<string, string> = {
   crops: "Crops Booths",
   animals: "Animal Booths",
   food: "Food Booths",
+  platinum: "Platinum Sponsor Booths",
+  gold: "Gold Sponsor Booths",
+  silver: "Silver Sponsor Booths",
+  bronze: "Bronze Sponsor Booths",
 };
 
 export default function BoothsPage() {
@@ -77,6 +83,7 @@ export default function BoothsPage() {
   };
 
   const sections = Object.keys(sectionLabels);
+  const isSponsorFlow = booths.some((b) => b.audience === "SPONSOR");
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -111,11 +118,18 @@ export default function BoothsPage() {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <h1 className="text-3xl md:text-5xl font-bold text-deepBlue font-poppins mb-4">
-            Booth Selection
+            {isSponsorFlow ? "Sponsor Booth Selection" : "Exhibitor Booth Selection"}
           </h1>
           <p className="text-lg text-gray-600 font-inter max-w-2xl mx-auto mb-8">
-            Select your preferred exhibition booths and generate an invoice.
+            {isSponsorFlow
+              ? "Select from sponsor-designated booths that match your registered sponsorship category."
+              : "Select your preferred exhibition booths and generate your booking invoice."}
           </p>
+
+          <div className="max-w-3xl mx-auto mb-8 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 text-left">
+            Selected booths are reserved for 7 days only. Payment must be completed within this period to confirm
+            the booking. Unpaid reservations will expire automatically and the booth will become available again.
+          </div>
 
           <div className="flex flex-wrap justify-center items-center gap-3 sm:gap-6 bg-white py-3 sm:py-4 px-4 sm:px-8 rounded-full shadow-sm border border-gray-200">
             <div className="flex items-center">
@@ -172,7 +186,11 @@ export default function BoothsPage() {
                             <span className="font-bold text-deepBlue font-poppins text-xl block">
                               {booth.name}
                             </span>
-                            <span className="text-sm text-gray-500 font-inter">{section}</span>
+                            <span className="text-sm text-gray-500 font-inter">
+                              {booth.audience === "SPONSOR"
+                                ? `${section}${booth.sponsorLevel ? ` (${booth.sponsorLevel})` : ""}`
+                                : section}
+                            </span>
                           </div>
                           <span className={`w-3 h-3 rounded-full ${getStatusDot(booth.status)}`}></span>
                         </div>
@@ -218,6 +236,9 @@ export default function BoothsPage() {
                 <p className="text-2xl font-bold text-deepBlue font-poppins">
                   KES {totalPrice.toLocaleString()}
                 </p>
+                <p className="text-xs text-amber-700 mt-1">
+                  Reservation validity: 7 days from invoice generation.
+                </p>
               </div>
               <button
                 onClick={handleReserve}
@@ -225,7 +246,7 @@ export default function BoothsPage() {
                 className="bg-maroon hover:bg-gold text-white font-bold py-3 px-8 rounded-lg transition-colors duration-300 disabled:opacity-50 flex items-center gap-2"
               >
                 {submitting && <Loader2Icon className="h-4 w-4 animate-spin" />}
-                Generate Invoice
+                Continue to Invoice
               </button>
             </div>
           </div>
