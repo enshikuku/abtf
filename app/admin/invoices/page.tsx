@@ -6,7 +6,12 @@ import { Loader2Icon, FileTextIcon, SearchIcon, XCircleIcon, DownloadIcon } from
 interface InvoiceItem {
 	id: string;
 	price: string;
-	booth: { name: string; section: string };
+	booth: {
+		name: string;
+		section: string;
+		audience: "EXHIBITOR" | "SPONSOR";
+		sponsorLevel: "PLATINUM" | "GOLD" | "SILVER" | "BRONZE" | null;
+	};
 }
 
 interface Payment {
@@ -92,7 +97,7 @@ export default function AdminInvoicesPage() {
 		const rows = inv.items.map((item, i) => [
 			String(i + 1),
 			item.booth.name,
-			item.booth.section,
+			`${item.booth.section}${item.booth.audience === "SPONSOR" && item.booth.sponsorLevel ? ` (${item.booth.sponsorLevel.toLowerCase()})` : ""}`,
 			`KES ${Number(item.price).toLocaleString()}`,
 		]);
 
@@ -203,11 +208,10 @@ export default function AdminInvoicesPage() {
 											</td>
 											<td className="px-4 py-3">
 												{latestPayment ? (
-													<span className={`px-2 py-1 rounded-full text-xs font-bold ${
-														latestPayment.status === "VERIFIED" ? "bg-green-100 text-green-800" :
-														latestPayment.status === "SUBMITTED" ? "bg-yellow-100 text-yellow-800" :
-														"bg-red-100 text-red-800"
-													}`}>
+													<span className={`px-2 py-1 rounded-full text-xs font-bold ${latestPayment.status === "VERIFIED" ? "bg-green-100 text-green-800" :
+															latestPayment.status === "SUBMITTED" ? "bg-yellow-100 text-yellow-800" :
+																"bg-red-100 text-red-800"
+														}`}>
 														{latestPayment.status}
 													</span>
 												) : (
@@ -303,7 +307,10 @@ export default function AdminInvoicesPage() {
 											<tr key={item.id}>
 												<td className="px-3 py-2">{i + 1}</td>
 												<td className="px-3 py-2 font-medium text-deepBlue">{item.booth.name}</td>
-												<td className="px-3 py-2 capitalize">{item.booth.section}</td>
+												<td className="px-3 py-2 capitalize">
+													{item.booth.section}
+													{item.booth.audience === "SPONSOR" && item.booth.sponsorLevel ? ` (${item.booth.sponsorLevel.toLowerCase()})` : ""}
+												</td>
 												<td className="px-3 py-2 text-right">KES {Number(item.price).toLocaleString()}</td>
 											</tr>
 										))}
@@ -332,11 +339,10 @@ export default function AdminInvoicesPage() {
 														{new Date(p.submittedAt).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })}
 													</p>
 												</div>
-												<span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-													p.status === "VERIFIED" ? "bg-green-100 text-green-800" :
-													p.status === "SUBMITTED" ? "bg-yellow-100 text-yellow-800" :
-													"bg-red-100 text-red-800"
-												}`}>
+												<span className={`px-2 py-0.5 rounded-full text-xs font-bold ${p.status === "VERIFIED" ? "bg-green-100 text-green-800" :
+														p.status === "SUBMITTED" ? "bg-yellow-100 text-yellow-800" :
+															"bg-red-100 text-red-800"
+													}`}>
 													{p.status}
 												</span>
 											</div>
