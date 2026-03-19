@@ -52,6 +52,10 @@ export function BoothSelection() {
             Reserve your exhibition space today. Prime locations are allocated
             on a first-come, first-served basis.
           </p>
+          <p className="text-sm text-amber-800 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 max-w-3xl mx-auto mb-8">
+            Selected booths are reserved for 7 days only. Payment must be completed within this period to confirm
+            the booking. Unpaid reservations will expire automatically and the booth will become available again.
+          </p>
 
           <div className="flex justify-center items-center gap-6 mb-12">
             <div className="flex items-center">
