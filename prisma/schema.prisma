@@ -45,6 +45,18 @@ enum PaymentMethod {
   OTHER
 }
 
+enum SponsorLevel {
+  PLATINUM
+  GOLD
+  SILVER
+  BRONZE
+}
+
+enum BoothAudience {
+  EXHIBITOR
+  SPONSOR
+}
+
 model User {
   id            String   @id @default(cuid())
   name          String
@@ -57,6 +69,8 @@ model User {
   description   String?  @db.Text
   website       String?
   category      String?
+  exhibitorCategory String?
+  sponsorLevel  SponsorLevel?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -80,6 +94,8 @@ model Booth {
   id           String      @id @default(cuid())
   name         String      @unique
   section      String
+  audience     BoothAudience @default(EXHIBITOR)
+  sponsorLevel SponsorLevel?
   price        Decimal     @db.Decimal(10, 2)
   status       BoothStatus @default(AVAILABLE)
   reservedBy   String?
