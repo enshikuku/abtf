@@ -17,10 +17,11 @@ export async function GET() {
 			companyName: true,
 			phone: true,
 			category: true,
+			exhibitorCategory: true,
 			description: true,
 			createdAt: true,
 			booths: {
-				select: { id: true, name: true, section: true, status: true },
+				select: { id: true, name: true, section: true, status: true, audience: true },
 			},
 			invoices: {
 				select: { id: true, invoiceNumber: true, totalAmount: true, status: true },
