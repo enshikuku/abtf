@@ -17,6 +17,8 @@ export async function GET() {
 			companyName: true,
 			phone: true,
 			category: true,
+			exhibitorCategory: true,
+			sponsorLevel: true,
 			createdAt: true,
 			_count: {
 				select: {
