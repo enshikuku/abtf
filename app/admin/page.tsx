@@ -20,6 +20,8 @@ interface Stats {
 	totalExhibitors: number;
 	totalSponsors: number;
 	totalBooths: number;
+	totalExhibitorBooths: number;
+	totalSponsorBooths: number;
 	reservedBooths: number;
 	paymentSubmittedBooths: number;
 	confirmedBooths: number;
@@ -54,16 +56,18 @@ export default function AdminDashboardPage() {
 
 	const statCards = stats
 		? [
-				{ label: "Total Exhibitors", value: stats.totalExhibitors, icon: UsersIcon, color: "text-blue-600 bg-blue-50", href: "/admin/exhibitors" },
-				{ label: "Total Sponsors", value: stats.totalSponsors, icon: StarIcon, color: "text-purple-600 bg-purple-50", href: "/admin/sponsors" },
-				{ label: "Total Booths", value: stats.totalBooths, icon: LayoutGridIcon, color: "text-gray-600 bg-gray-100", href: "/admin/booths" },
-				{ label: "Available Booths", value: stats.availableBooths, icon: CheckCircleIcon, color: "text-green-600 bg-green-50", href: "/admin/booths" },
-				{ label: "Reserved Booths", value: stats.reservedBooths, icon: ClockIcon, color: "text-orange-600 bg-orange-50", href: "/admin/booths" },
-				{ label: "Confirmed Booths", value: stats.confirmedBooths, icon: CheckCircleIcon, color: "text-emerald-600 bg-emerald-50", href: "/admin/booths" },
-				{ label: "Pending Payments", value: stats.pendingPayments, icon: AlertCircleIcon, color: "text-yellow-600 bg-yellow-50", href: "/admin/payments" },
-				{ label: "Verified Payments", value: stats.verifiedPayments, icon: CreditCardIcon, color: "text-green-600 bg-green-50", href: "/admin/payments" },
-				{ label: "Total Users", value: stats.totalUsers, icon: ShieldIcon, color: "text-indigo-600 bg-indigo-50", href: "/admin/users" },
-		  ]
+			{ label: "Total Exhibitors", value: stats.totalExhibitors, icon: UsersIcon, color: "text-blue-600 bg-blue-50", href: "/admin/exhibitors" },
+			{ label: "Total Sponsors", value: stats.totalSponsors, icon: StarIcon, color: "text-purple-600 bg-purple-50", href: "/admin/sponsors" },
+			{ label: "Total Booths", value: stats.totalBooths, icon: LayoutGridIcon, color: "text-gray-600 bg-gray-100", href: "/admin/booths" },
+			{ label: "Exhibitor Booths", value: stats.totalExhibitorBooths, icon: LayoutGridIcon, color: "text-blue-600 bg-blue-50", href: "/admin/booths" },
+			{ label: "Sponsor Booths", value: stats.totalSponsorBooths, icon: LayoutGridIcon, color: "text-purple-600 bg-purple-50", href: "/admin/booths" },
+			{ label: "Available Booths", value: stats.availableBooths, icon: CheckCircleIcon, color: "text-green-600 bg-green-50", href: "/admin/booths" },
+			{ label: "Reserved Booths", value: stats.reservedBooths, icon: ClockIcon, color: "text-orange-600 bg-orange-50", href: "/admin/booths" },
+			{ label: "Confirmed Booths", value: stats.confirmedBooths, icon: CheckCircleIcon, color: "text-emerald-600 bg-emerald-50", href: "/admin/booths" },
+			{ label: "Pending Payments", value: stats.pendingPayments, icon: AlertCircleIcon, color: "text-yellow-600 bg-yellow-50", href: "/admin/payments" },
+			{ label: "Verified Payments", value: stats.verifiedPayments, icon: CreditCardIcon, color: "text-green-600 bg-green-50", href: "/admin/payments" },
+			{ label: "Total Users", value: stats.totalUsers, icon: ShieldIcon, color: "text-indigo-600 bg-indigo-50", href: "/admin/users" },
+		]
 		: [];
 
 	const quickLinks = [
