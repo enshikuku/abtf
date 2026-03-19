@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { createSession } from "@/lib/auth";
 
+const EXHIBITOR_CATEGORIES = ["machinery", "crops", "animals", "food"] as const;
+
 export async function GET() {
 	try {
 		const exhibitors = await prisma.user.findMany({
@@ -14,6 +16,7 @@ export async function GET() {
 				companyName: true,
 				phone: true,
 				category: true,
+				exhibitorCategory: true,
 				description: true,
 				createdAt: true,
 			},
@@ -39,6 +42,10 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
 		}
 
+		if (!EXHIBITOR_CATEGORIES.includes(category)) {
+			return NextResponse.json({ error: "Invalid exhibition category selected" }, { status: 400 });
+		}
+
 		const existing = await prisma.user.findUnique({ where: { email } });
 		if (existing) {
 			return NextResponse.json({ error: "A registration with this email already exists" }, { status: 409 });
@@ -54,6 +61,7 @@ export async function POST(request: NextRequest) {
 				phone,
 				password: hashedPassword,
 				category,
+				exhibitorCategory: category,
 				description,
 				role: "EXHIBITOR",
 			},
