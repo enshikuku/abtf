@@ -15,6 +15,8 @@ import {
 	LayoutGridIcon,
 	FileTextIcon,
 } from "lucide-react";
+import { getExhibitionCategoryDescription, getExhibitionCategoryName } from "@/lib/exhibition-categories";
+import { ExportActions } from "@/components/admin/ExportActions";
 
 interface UserItem {
 	id: string;
@@ -105,6 +107,8 @@ export default function AdminUsersPage() {
 		);
 	};
 
+	const selectedUserExhibitorCategory = selectedUser ? (selectedUser.exhibitorCategory || selectedUser.category) : null;
+
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center py-32">
@@ -115,12 +119,34 @@ export default function AdminUsersPage() {
 
 	return (
 		<div className="max-w-7xl mx-auto">
-			<div className="mb-6">
-				<h1 className="text-2xl font-bold text-deepBlue font-poppins flex items-center gap-3">
-					<ShieldIcon className="h-7 w-7 text-maroon" />
-					User Management
-				</h1>
-				<p className="text-gray-500 mt-1">Manage all registered users, roles, and accounts</p>
+			<div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+				<div>
+					<h1 className="text-2xl font-bold text-deepBlue font-poppins flex items-center gap-3">
+						<ShieldIcon className="h-7 w-7 text-maroon" />
+						User Management
+					</h1>
+					<p className="text-gray-500 mt-1">Manage all registered users, roles, and accounts</p>
+				</div>
+				<ExportActions
+					title="ABTF User Report"
+					filenameBase="abtf-users"
+					rows={filtered}
+					metadata={{
+						"Rows Included": filtered.length,
+						"Role Filter": roleFilter,
+					}}
+					columns={[
+						{ header: "Name", value: (row) => row.name },
+						{ header: "Email", value: (row) => row.email },
+						{ header: "Role", value: (row) => row.role },
+						{ header: "Company", value: (row) => row.companyName },
+						{ header: "Phone", value: (row) => row.phone },
+						{ header: "Category", value: (row) => row.exhibitorCategory || row.category || row.sponsorLevel || "-" },
+						{ header: "Booths", value: (row) => row._count.booths },
+						{ header: "Invoices", value: (row) => row._count.invoices },
+						{ header: "Created At", value: (row) => new Date(row.createdAt).toLocaleString() },
+					]}
+				/>
 			</div>
 
 			{/* Filters */}
@@ -267,11 +293,20 @@ export default function AdminUsersPage() {
 									{selectedUser.companyName}
 								</div>
 								{(selectedUser.exhibitorCategory || selectedUser.category || selectedUser.sponsorLevel) && (
-									<div className="flex items-center gap-2 text-gray-600">
+									<div className="flex items-start gap-2 text-gray-600">
 										<UsersIcon className="h-4 w-4 text-gray-400" />
-										{selectedUser.role === "SPONSOR"
-											? `Sponsor Category: ${selectedUser.sponsorLevel || "Not set"}`
-											: `Exhibitor Category: ${selectedUser.exhibitorCategory || selectedUser.category || "Not set"}`}
+										<div>
+											<p>
+												{selectedUser.role === "SPONSOR"
+													? `Sponsor Category: ${selectedUser.sponsorLevel || "Not set"}`
+													: `Exhibitor Category: ${getExhibitionCategoryName(selectedUserExhibitorCategory)}`}
+											</p>
+											{selectedUser.role !== "SPONSOR" && selectedUserExhibitorCategory && (
+												<p className="text-xs text-gray-500 mt-1 leading-relaxed">
+													{getExhibitionCategoryDescription(selectedUserExhibitorCategory)}
+												</p>
+											)}
+										</div>
 									</div>
 								)}
 								<div className="flex items-center gap-2 text-gray-600">
