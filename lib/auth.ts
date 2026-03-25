@@ -1,5 +1,6 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 import { prisma } from "./prisma";
 
 const secret = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-secret");
@@ -62,8 +63,8 @@ export async function getAuthUserWithDb() {
 	return user;
 }
 
-export function setTokenCookie(response: Response, token: string) {
-	(response as any).cookies?.set?.("token", token, {
+export function setTokenCookie(response: NextResponse, token: string) {
+	response.cookies.set("token", token, {
 		httpOnly: true,
 		secure: process.env.NODE_ENV === "production",
 		sameSite: "lax",
