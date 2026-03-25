@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { UploadIcon, XIcon } from "lucide-react";
+import { siteImages } from "@/lib/site-images";
 
 export default function RegisterSponsorFormPage() {
     const router = useRouter();
@@ -97,6 +98,17 @@ export default function RegisterSponsorFormPage() {
                     <p className="text-gray-300 mt-2 font-inter">
                         Complete this form through your company&apos;s nominated representative.
                     </p>
+                </div>
+
+                <div className="relative h-44 sm:h-52">
+                    <Image
+                        src={siteImages.uoe003.src}
+                        alt={siteImages.uoe003.alt}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 768px"
+                        className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-deepBlue/35" />
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-4 sm:p-6 md:p-8 space-y-6">
