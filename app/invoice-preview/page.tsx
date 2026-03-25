@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { FileTextIcon, BuildingIcon, CreditCardIcon, DownloadIcon, Loader2Icon } from "lucide-react";
+import { FileTextIcon, CreditCardIcon, DownloadIcon, Loader2Icon } from "lucide-react";
+import { getBoothSectionDisplay } from "@/lib/exhibition-categories";
 
 interface InvoiceItem {
   id: string;
@@ -79,7 +80,7 @@ export default function InvoicePreviewPage() {
     const rows = inv.items.map((item, i) => [
       String(i + 1),
       item.booth.name,
-      item.booth.section,
+      getBoothSectionDisplay(item.booth.section, item.booth.audience),
       `KES ${Number(item.price).toLocaleString()}`,
     ]);
 
@@ -91,7 +92,7 @@ export default function InvoicePreviewPage() {
       headStyles: { fillColor: [102, 0, 0] },
     });
 
-    const finalY = (doc as any).lastAutoTable?.finalY || 100;
+    const finalY = (doc as typeof doc & { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY || 100;
     doc.setFontSize(13);
     doc.setTextColor(102, 0, 0);
     doc.text(`Total: KES ${Number(inv.totalAmount).toLocaleString()}`, 14, finalY + 14);
@@ -192,8 +193,8 @@ export default function InvoicePreviewPage() {
                       <div>
                         <span className="font-bold text-deepBlue">{item.booth.name}</span>
                         <span className="text-gray-500 text-sm ml-2">
-                          ({item.booth.section}
-                          {item.booth.audience === "SPONSOR" && item.booth.sponsorLevel ? ` - ${item.booth.sponsorLevel.toLowerCase()}` : ""})
+                          ({getBoothSectionDisplay(item.booth.section, item.booth.audience)}
+                          {item.booth.audience === "SPONSOR" && item.booth.sponsorLevel ? ` - ${item.booth.sponsorLevel}` : ""})
                         </span>
                       </div>
                       <span className="font-bold text-gray-800">KES {Number(item.price).toLocaleString()}</span>
