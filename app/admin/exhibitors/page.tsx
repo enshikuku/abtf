@@ -2,6 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { Loader2Icon, UsersIcon, SearchIcon, XCircleIcon } from "lucide-react";
+import {
+	EXHIBITION_CATEGORIES,
+	getExhibitionCategoryDescription,
+	getExhibitionCategoryName,
+} from "@/lib/exhibition-categories";
+import { getBoothStatusTheme } from "@/lib/booth-status";
+import { ExportActions } from "@/components/admin/ExportActions";
 
 interface Booth {
 	id: string;
@@ -36,6 +43,7 @@ export default function AdminExhibitorsPage() {
 	const [exhibitors, setExhibitors] = useState<Exhibitor[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [search, setSearch] = useState("");
+	const [categoryFilter, setCategoryFilter] = useState("ALL");
 	const [selectedExhibitor, setSelectedExhibitor] = useState<Exhibitor | null>(null);
 
 	useEffect(() => {
@@ -49,6 +57,7 @@ export default function AdminExhibitorsPage() {
 	}, []);
 
 	const filtered = exhibitors.filter((e) => {
+		if (categoryFilter !== "ALL" && (e.exhibitorCategory || e.category) !== categoryFilter) return false;
 		if (!search) return true;
 		const q = search.toLowerCase();
 		return (
@@ -68,6 +77,9 @@ export default function AdminExhibitorsPage() {
 		return colors[status] || "bg-gray-100 text-gray-800";
 	};
 
+	const boothStatusLabel = (status: string) => getBoothStatusTheme(status).label;
+	const boothStatusBadge = (status: string) => getBoothStatusTheme(status).badgeClass;
+
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center py-32">
@@ -78,23 +90,58 @@ export default function AdminExhibitorsPage() {
 
 	return (
 		<div className="max-w-7xl mx-auto">
-			<div className="mb-6">
-				<h1 className="text-2xl font-bold text-deepBlue font-poppins flex items-center gap-2">
-					<UsersIcon className="h-6 w-6 text-maroon" /> Exhibitors ({exhibitors.length})
-				</h1>
+			<div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+				<div>
+					<h1 className="text-2xl font-bold text-deepBlue font-poppins flex items-center gap-2">
+						<UsersIcon className="h-6 w-6 text-maroon" /> Exhibitors ({exhibitors.length})
+					</h1>
+				</div>
+				<ExportActions
+					title="ABTF Exhibitor Report"
+					filenameBase="abtf-exhibitors"
+					rows={filtered}
+					metadata={{
+						"Rows Included": filtered.length,
+						"Category Filter": categoryFilter,
+					}}
+					columns={[
+						{ header: "Company", value: (row) => row.companyName },
+						{ header: "Contact Person", value: (row) => row.name },
+						{ header: "Email", value: (row) => row.email },
+						{ header: "Phone", value: (row) => row.phone },
+						{ header: "Category", value: (row) => getExhibitionCategoryName(row.exhibitorCategory || row.category) },
+						{ header: "Booths", value: (row) => row.booths.map((booth) => booth.name).join(", ") || "-" },
+						{ header: "Invoices", value: (row) => row.invoices.length },
+						{ header: "Created At", value: (row) => new Date(row.createdAt).toLocaleString() },
+					]}
+				/>
 			</div>
 
 			{/* Search */}
 			<div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
-				<div className="relative">
-					<SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-					<input
-						type="text"
-						placeholder="Search by name, company, or email..."
-						value={search}
-						onChange={(e) => setSearch(e.target.value)}
-						className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-maroon focus:border-transparent outline-none"
-					/>
+				<div className="flex flex-col sm:flex-row gap-3">
+					<div className="relative flex-1">
+						<SearchIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+						<input
+							type="text"
+							placeholder="Search by name, company, or email..."
+							value={search}
+							onChange={(e) => setSearch(e.target.value)}
+							className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-maroon focus:border-transparent outline-none"
+						/>
+					</div>
+					<select
+						value={categoryFilter}
+						onChange={(e) => setCategoryFilter(e.target.value)}
+						className="px-3 py-2 border border-gray-300 rounded-lg text-sm bg-white focus:ring-2 focus:ring-maroon focus:border-transparent outline-none"
+					>
+						<option value="ALL">All Categories</option>
+						{EXHIBITION_CATEGORIES.map((category) => (
+							<option key={category.slug} value={category.slug}>
+								{category.name}
+							</option>
+						))}
+					</select>
 				</div>
 			</div>
 
@@ -112,6 +159,7 @@ export default function AdminExhibitorsPage() {
 									<th className="text-left px-4 py-3 font-medium text-gray-600">Contact Person</th>
 									<th className="text-left px-4 py-3 font-medium text-gray-600">Email</th>
 									<th className="text-left px-4 py-3 font-medium text-gray-600">Phone</th>
+									<th className="text-left px-4 py-3 font-medium text-gray-600">Category</th>
 									<th className="text-left px-4 py-3 font-medium text-gray-600">Booths</th>
 									<th className="text-left px-4 py-3 font-medium text-gray-600">Invoice Status</th>
 									<th className="text-right px-4 py-3 font-medium text-gray-600">Action</th>
@@ -126,6 +174,9 @@ export default function AdminExhibitorsPage() {
 											<td className="px-4 py-3">{e.name}</td>
 											<td className="px-4 py-3 text-gray-600">{e.email}</td>
 											<td className="px-4 py-3 text-gray-600">{e.phone}</td>
+											<td className="px-4 py-3 text-xs text-gray-700 max-w-56 whitespace-normal">
+												{getExhibitionCategoryName(e.exhibitorCategory || e.category)}
+											</td>
 											<td className="px-4 py-3">
 												{e.booths.length > 0 ? (
 													<span className="text-xs font-medium">
@@ -187,7 +238,10 @@ export default function AdminExhibitorsPage() {
 								</div>
 								<div>
 									<label className="text-xs font-bold text-gray-400 uppercase">Category</label>
-									<p className="text-deepBlue font-medium mt-1 capitalize">{selectedExhibitor.exhibitorCategory || selectedExhibitor.category || "—"}</p>
+									<p className="text-deepBlue font-medium mt-1">{getExhibitionCategoryName(selectedExhibitor.exhibitorCategory || selectedExhibitor.category)}</p>
+									<p className="text-xs text-gray-500 mt-1 leading-relaxed">
+										{getExhibitionCategoryDescription(selectedExhibitor.exhibitorCategory || selectedExhibitor.category)}
+									</p>
 								</div>
 								<div className="col-span-2">
 									<label className="text-xs font-bold text-gray-400 uppercase">Registered</label>
@@ -213,13 +267,12 @@ export default function AdminExhibitorsPage() {
 												<span className="font-medium text-deepBlue">{b.name}</span>
 												<div className="flex items-center gap-2">
 													<span className="text-xs text-gray-500 capitalize">
-														{b.section}
+														{getExhibitionCategoryName(b.section)}
 														{b.audience === "SPONSOR" ? " (sponsor booth)" : ""}
 													</span>
-													<span className={`px-2 py-0.5 rounded-full text-xs font-bold ${b.status === "CONFIRMED" ? "bg-green-100 text-green-800" :
-														b.status === "RESERVED" ? "bg-orange-100 text-orange-800" :
-															"bg-blue-100 text-blue-800"
-														}`}>{b.status.replace(/_/g, " ")}</span>
+													<span className={`px-2 py-0.5 rounded-full text-xs font-bold ${boothStatusBadge(b.status)}`}>
+														{boothStatusLabel(b.status)}
+													</span>
 												</div>
 											</div>
 										))}
