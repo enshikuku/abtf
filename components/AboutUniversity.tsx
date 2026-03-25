@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { BookOpenIcon, FlaskConicalIcon, UsersIcon } from "lucide-react";
+import { siteImages } from "@/lib/site-images";
 
 export function AboutUniversity() {
   return (
@@ -11,11 +12,14 @@ export function AboutUniversity() {
           {/* Image */}
           <div className="order-2 lg:order-1 relative">
             <div className="absolute -inset-4 bg-deepBlue/5 rounded-2xl transform -rotate-3"></div>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-              alt="University Campus"
+            <Image
+              src={siteImages.dsc5025.src}
+              alt={siteImages.dsc5025.alt}
+              width={1200}
+              height={900}
+              sizes="(max-width: 1024px) 100vw, 50vw"
               className="relative rounded-2xl shadow-xl w-full h-[300px] sm:h-[400px] md:h-[500px] object-cover"
+              style={{ objectPosition: siteImages.dsc5025.objectPosition || "center" }}
             />
             <div className="absolute top-4 right-4 bg-white p-3 rounded-lg shadow-lg">
               <Image
@@ -57,6 +61,16 @@ export function AboutUniversity() {
                     Pioneering research in crop science, soil health, and
                     sustainable farming practices to ensure food security.
                   </p>
+                  <div className="mt-3 rounded-lg overflow-hidden border border-gray-200 w-full max-w-sm">
+                    <Image
+                      src={siteImages.uoe001.src}
+                      alt={siteImages.uoe001.alt}
+                      width={720}
+                      height={420}
+                      sizes="(max-width: 768px) 100vw, 360px"
+                      className="w-full h-40 object-cover"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -74,6 +88,16 @@ export function AboutUniversity() {
                     Developing smart agricultural technologies and agribusiness
                     models for the modern farmer.
                   </p>
+                  <div className="mt-3 rounded-lg overflow-hidden border border-gray-200 w-full max-w-sm">
+                    <Image
+                      src={siteImages.uoe002.src}
+                      alt={siteImages.uoe002.alt}
+                      width={720}
+                      height={420}
+                      sizes="(max-width: 768px) 100vw, 360px"
+                      className="w-full h-40 object-cover"
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -91,6 +115,16 @@ export function AboutUniversity() {
                     Directly impacting local farming communities through
                     extension services and knowledge transfer programs.
                   </p>
+                  <div className="mt-3 rounded-lg overflow-hidden border border-gray-200 w-full max-w-sm">
+                    <Image
+                      src={siteImages.uoe003.src}
+                      alt={siteImages.uoe003.alt}
+                      width={720}
+                      height={420}
+                      sizes="(max-width: 768px) 100vw, 360px"
+                      className="w-full h-40 object-cover"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
