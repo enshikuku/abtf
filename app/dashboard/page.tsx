@@ -16,6 +16,8 @@ import {
 	AlertCircleIcon,
 	CreditCardIcon,
 } from "lucide-react";
+import { getBoothSectionDisplay, getExhibitionCategoryName } from "@/lib/exhibition-categories";
+import { getBoothStatusTheme } from "@/lib/booth-status";
 
 interface UserProfile {
 	id: string;
@@ -67,10 +69,10 @@ interface Invoice {
 }
 
 const boothStatusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircleIcon }> = {
-	AVAILABLE: { label: "Available", color: "bg-green-100 text-green-800", icon: CheckCircleIcon },
-	RESERVED: { label: "Reserved", color: "bg-orange-100 text-orange-800", icon: ClockIcon },
-	PAYMENT_SUBMITTED: { label: "Payment Submitted", color: "bg-blue-100 text-blue-800", icon: CreditCardIcon },
-	CONFIRMED: { label: "Confirmed", color: "bg-emerald-100 text-emerald-800", icon: CheckCircleIcon },
+	AVAILABLE: { label: getBoothStatusTheme("AVAILABLE").label, color: getBoothStatusTheme("AVAILABLE").badgeClass, icon: CheckCircleIcon },
+	RESERVED: { label: getBoothStatusTheme("RESERVED").label, color: getBoothStatusTheme("RESERVED").badgeClass, icon: ClockIcon },
+	PAYMENT_SUBMITTED: { label: getBoothStatusTheme("PAYMENT_SUBMITTED").label, color: getBoothStatusTheme("PAYMENT_SUBMITTED").badgeClass, icon: CreditCardIcon },
+	CONFIRMED: { label: getBoothStatusTheme("CONFIRMED").label, color: getBoothStatusTheme("CONFIRMED").badgeClass, icon: CheckCircleIcon },
 };
 
 const invoiceStatusConfig: Record<string, { label: string; color: string }> = {
@@ -208,7 +210,7 @@ export default function DashboardPage() {
 		const rows = inv.items.map((item, i) => [
 			String(i + 1),
 			item.booth.name,
-			item.booth.section,
+			getBoothSectionDisplay(item.booth.section, item.booth.audience),
 			`KES ${Number(item.price).toLocaleString()}`,
 		]);
 
@@ -220,7 +222,7 @@ export default function DashboardPage() {
 			headStyles: { fillColor: [102, 0, 0] },
 		});
 
-		const finalY = (doc as any).lastAutoTable?.finalY || 100;
+		const finalY = (doc as typeof doc & { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY || 100;
 		doc.setFontSize(13);
 		doc.setTextColor(102, 0, 0);
 		doc.text(`Total: KES ${Number(inv.totalAmount).toLocaleString()}`, 14, finalY + 14);
@@ -307,8 +309,8 @@ export default function DashboardPage() {
 										<label className="text-xs font-bold text-gray-400 uppercase tracking-wider">
 											{user.role === "SPONSOR" ? "Sponsor Category" : "Exhibitor Category"}
 										</label>
-										<p className="text-lg text-deepBlue font-medium mt-1 capitalize">
-											{(user.role === "SPONSOR" ? user.sponsorLevel : user.exhibitorCategory || user.category)?.toLowerCase()}
+										<p className="text-lg text-deepBlue font-medium mt-1">
+											{user.role === "SPONSOR" ? user.sponsorLevel : getExhibitionCategoryName(user.exhibitorCategory || user.category)}
 										</p>
 									</div>
 								)}
@@ -362,9 +364,9 @@ export default function DashboardPage() {
 											return (
 												<tr key={booth.id} className="hover:bg-gray-50">
 													<td className="px-4 py-3 font-bold text-deepBlue">{booth.name}</td>
-													<td className="px-4 py-3 text-gray-700 capitalize">
-														{booth.section}
-														{booth.audience === "SPONSOR" && booth.sponsorLevel ? ` (${booth.sponsorLevel.toLowerCase()})` : ""}
+													<td className="px-4 py-3 text-gray-700">
+														{getBoothSectionDisplay(booth.section, booth.audience)}
+														{booth.audience === "SPONSOR" && booth.sponsorLevel ? ` (${booth.sponsorLevel})` : ""}
 													</td>
 													<td className="px-4 py-3 font-medium text-gray-800">
 														KES {Number(booth.price).toLocaleString()}
@@ -456,7 +458,7 @@ export default function DashboardPage() {
 													{inv.items.map((item) => (
 														<tr key={item.id}>
 															<td className="px-4 py-2 font-medium text-deepBlue">{item.booth.name}</td>
-															<td className="px-4 py-2 text-gray-600 capitalize">{item.booth.section}</td>
+															<td className="px-4 py-2 text-gray-600">{getBoothSectionDisplay(item.booth.section, item.booth.audience)}</td>
 															<td className="px-4 py-2 text-right font-medium">
 																KES {Number(item.price).toLocaleString()}
 															</td>
