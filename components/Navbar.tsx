@@ -98,6 +98,18 @@ export function Navbar() {
                   Contact
                 </Link>
                 <Link
+                  href="/attendee-registration"
+                  className="text-deepBlue hover:text-maroon transition-colors text-sm font-medium font-inter"
+                >
+                  Attendees
+                </Link>
+                <Link
+                  href="/feedback"
+                  className="text-deepBlue hover:text-maroon transition-colors text-sm font-medium font-inter"
+                >
+                  Feedback
+                </Link>
+                <Link
                   href="/login"
                   className="flex items-center gap-1.5 bg-maroon hover:bg-gold text-white px-4 py-2 rounded-md text-sm font-medium transition-colors duration-300 font-inter"
                 >
@@ -134,6 +146,12 @@ export function Navbar() {
                 >
                   Contact
                 </Link>
+                <Link
+                  href="/feedback"
+                  className="text-deepBlue hover:text-maroon transition-colors text-sm font-medium font-inter"
+                >
+                  Feedback
+                </Link>
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-1.5 text-sm text-deepBlue hover:text-maroon transition-colors font-medium font-inter"
@@ -160,10 +178,22 @@ export function Navbar() {
                   Booths
                 </Link>
                 <Link
+                  href="/admin/reservations"
+                  className="text-deepBlue hover:text-maroon transition-colors text-sm font-medium font-inter"
+                >
+                  Reservations
+                </Link>
+                <Link
                   href="/admin/payments"
                   className="text-deepBlue hover:text-maroon transition-colors text-sm font-medium font-inter"
                 >
                   Payments
+                </Link>
+                <Link
+                  href="/admin/reports"
+                  className="text-deepBlue hover:text-maroon transition-colors text-sm font-medium font-inter"
+                >
+                  Reports
                 </Link>
                 <Link
                   href="/admin/exhibitors"
@@ -188,6 +218,18 @@ export function Navbar() {
                   className="text-deepBlue hover:text-maroon transition-colors text-sm font-medium font-inter"
                 >
                   Users
+                </Link>
+                <Link
+                  href="/admin/attendees"
+                  className="text-deepBlue hover:text-maroon transition-colors text-sm font-medium font-inter"
+                >
+                  Attendees
+                </Link>
+                <Link
+                  href="/admin/feedback"
+                  className="text-deepBlue hover:text-maroon transition-colors text-sm font-medium font-inter"
+                >
+                  Feedback
                 </Link>
                 <button
                   onClick={handleLogout}
@@ -264,6 +306,20 @@ export function Navbar() {
               >
                 Contact
               </Link>
+              <Link
+                href="/attendee-registration"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-deepBlue hover:text-maroon py-3 text-base font-medium font-inter border-b border-gray-100"
+              >
+                Attendees
+              </Link>
+              <Link
+                href="/feedback"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="text-deepBlue hover:text-maroon py-3 text-base font-medium font-inter border-b border-gray-100"
+              >
+                Feedback
+              </Link>
               <div className="pt-3">
                 <Link
                   href="/login"
@@ -308,6 +364,13 @@ export function Navbar() {
               >
                 Contact
               </Link>
+              <Link
+                href="/feedback"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block text-deepBlue hover:text-maroon py-3 text-base font-medium font-inter border-b border-gray-100"
+              >
+                Feedback
+              </Link>
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 text-deepBlue hover:text-maroon py-3 text-base font-medium font-inter w-full"
@@ -336,11 +399,25 @@ export function Navbar() {
                 Booths
               </Link>
               <Link
+                href="/admin/reservations"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block text-deepBlue hover:text-maroon py-3 text-base font-medium font-inter border-b border-gray-100"
+              >
+                Reservations
+              </Link>
+              <Link
                 href="/admin/payments"
                 onClick={() => setIsMobileMenuOpen(false)}
                 className="block text-deepBlue hover:text-maroon py-3 text-base font-medium font-inter border-b border-gray-100"
               >
                 Payments
+              </Link>
+              <Link
+                href="/admin/reports"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block text-deepBlue hover:text-maroon py-3 text-base font-medium font-inter border-b border-gray-100"
+              >
+                Reports
               </Link>
               <Link
                 href="/admin/exhibitors"
@@ -369,6 +446,20 @@ export function Navbar() {
                 className="block text-deepBlue hover:text-maroon py-3 text-base font-medium font-inter border-b border-gray-100"
               >
                 Users
+              </Link>
+              <Link
+                href="/admin/attendees"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block text-deepBlue hover:text-maroon py-3 text-base font-medium font-inter border-b border-gray-100"
+              >
+                Attendees
+              </Link>
+              <Link
+                href="/admin/feedback"
+                onClick={() => setIsMobileMenuOpen(false)}
+                className="block text-deepBlue hover:text-maroon py-3 text-base font-medium font-inter border-b border-gray-100"
+              >
+                Feedback
               </Link>
               <button
                 onClick={handleLogout}
