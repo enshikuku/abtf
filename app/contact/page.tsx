@@ -1,7 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { MapPinIcon, PhoneIcon, MailIcon } from "lucide-react";
+import { siteImages } from "@/lib/site-images";
 
 export default function ContactPage() {
   const router = useRouter();
@@ -28,6 +30,17 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Contact Info */}
           <div className="lg:col-span-1 space-y-8">
+            <div className="bg-white p-3 rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+              <Image
+                src={siteImages.uoe003.src}
+                alt={siteImages.uoe003.alt}
+                width={900}
+                height={1200}
+                sizes="(max-width: 1024px) 100vw, 33vw"
+                className="w-full h-60 object-cover rounded-xl"
+              />
+            </div>
+
             <div className="bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-md border border-gray-100">
               <h3 className="text-2xl font-bold text-deepBlue font-poppins mb-6">
                 Get in Touch
