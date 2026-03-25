@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
 import { createSession } from "@/lib/auth";
-
-const EXHIBITOR_CATEGORIES = ["machinery", "crops", "animals", "food"] as const;
+import { isExhibitionCategorySlug } from "@/lib/exhibition-categories";
 
 export async function GET() {
 	try {
@@ -42,7 +41,7 @@ export async function POST(request: NextRequest) {
 			return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 });
 		}
 
-		if (!EXHIBITOR_CATEGORIES.includes(category)) {
+		if (!isExhibitionCategorySlug(category)) {
 			return NextResponse.json({ error: "Invalid exhibition category selected" }, { status: 400 });
 		}
 
