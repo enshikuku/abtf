@@ -2,6 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { Loader2Icon, LayoutGridIcon, SearchIcon } from "lucide-react";
+import { getBoothSectionDisplay, getExhibitorSectionLabel, SPONSOR_SECTION_LABELS } from "@/lib/exhibition-categories";
+import { getBoothStatusTheme } from "@/lib/booth-status";
+import { ExportActions } from "@/components/admin/ExportActions";
 
 interface Booth {
 	id: string;
@@ -72,13 +75,7 @@ export default function AdminBoothsPage() {
 	});
 
 	const statusBadge = (status: string) => {
-		const colors: Record<string, string> = {
-			AVAILABLE: "bg-green-100 text-green-800",
-			RESERVED: "bg-orange-100 text-orange-800",
-			PAYMENT_SUBMITTED: "bg-blue-100 text-blue-800",
-			CONFIRMED: "bg-emerald-100 text-emerald-800",
-		};
-		return colors[status] || "bg-gray-100 text-gray-800";
+		return getBoothStatusTheme(status).badgeClass;
 	};
 
 	if (loading) {
@@ -91,11 +88,34 @@ export default function AdminBoothsPage() {
 
 	return (
 		<div className="max-w-7xl mx-auto">
-			<div className="mb-6">
-				<h1 className="text-2xl font-bold text-deepBlue font-poppins flex items-center gap-2">
-					<LayoutGridIcon className="h-6 w-6 text-maroon" /> Booth Management
-				</h1>
-				<p className="text-gray-500 mt-1">{booths.length} total booths</p>
+			<div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+				<div>
+					<h1 className="text-2xl font-bold text-deepBlue font-poppins flex items-center gap-2">
+						<LayoutGridIcon className="h-6 w-6 text-maroon" /> Booth Management
+					</h1>
+					<p className="text-gray-500 mt-1">{booths.length} total booths</p>
+				</div>
+				<ExportActions
+					title="ABTF Booth Report"
+					filenameBase="abtf-booths"
+					rows={filtered}
+					metadata={{
+						"Rows Included": filtered.length,
+						"Audience Filter": filterAudience,
+						"Section Filter": filterSection,
+						"Status Filter": filterStatus,
+					}}
+					columns={[
+						{ header: "Booth", value: (row) => row.name },
+						{ header: "Audience", value: (row) => row.audience },
+						{ header: "Section", value: (row) => getBoothSectionDisplay(row.section, row.audience) },
+						{ header: "Sponsor Level", value: (row) => row.sponsorLevel || "-" },
+						{ header: "Price", value: (row) => Number(row.price).toLocaleString() },
+						{ header: "Status", value: (row) => getBoothStatusTheme(row.status).label },
+						{ header: "Reserved By", value: (row) => row.user?.companyName || "-" },
+						{ header: "Reserved Until", value: (row) => (row.reservedUntil ? new Date(row.reservedUntil).toLocaleString() : "-") },
+					]}
+				/>
 			</div>
 
 			{/* Filters */}
@@ -126,7 +146,7 @@ export default function AdminBoothsPage() {
 				>
 					{sections.map((s) => (
 						<option key={s} value={s}>
-							{s === "ALL" ? "All Sections" : s.charAt(0).toUpperCase() + s.slice(1)}
+							{s === "ALL" ? "All Sections" : SPONSOR_SECTION_LABELS[s] || getExhibitorSectionLabel(s)}
 						</option>
 					))}
 				</select>
@@ -171,14 +191,14 @@ export default function AdminBoothsPage() {
 											{b.audience}
 										</span>
 									</td>
-									<td className="px-4 py-3 capitalize">
-										{b.section}
-										{b.audience === "SPONSOR" && b.sponsorLevel ? ` (${b.sponsorLevel.toLowerCase()})` : ""}
+									<td className="px-4 py-3">
+										{getBoothSectionDisplay(b.section, b.audience)}
+										{b.audience === "SPONSOR" && b.sponsorLevel ? ` (${b.sponsorLevel})` : ""}
 									</td>
 									<td className="px-4 py-3">KES {Number(b.price).toLocaleString()}</td>
 									<td className="px-4 py-3">
 										<span className={`px-2 py-1 rounded-full text-xs font-bold ${statusBadge(b.status)}`}>
-											{b.status.replace(/_/g, " ")}
+											{getBoothStatusTheme(b.status).label}
 										</span>
 									</td>
 									<td className="px-4 py-3 text-gray-600">
