@@ -1,20 +1,41 @@
+"use client";
+
 import Link from "next/link";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { CalendarIcon, MapPinIcon } from "lucide-react";
+import { homepageHeroSlides } from "@/lib/site-images";
 
 export function HeroSection() {
+  const [activeSlide, setActiveSlide] = useState(0);
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setActiveSlide((prev) => (prev + 1) % homepageHeroSlides.length);
+    }, 5000);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
   return (
     <section
       id="home"
       className="relative min-h-[80vh] flex items-center pt-20"
     >
-      {/* Background Image with Overlay */}
-      <div
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage:
-            'url("https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80")',
-        }}
-      >
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        {homepageHeroSlides.map((slide, index) => (
+          <Image
+            key={slide.src}
+            src={slide.src}
+            alt={slide.alt}
+            fill
+            priority={index === 0}
+            sizes="100vw"
+            className={`object-cover transition-opacity duration-700 ${index === activeSlide ? "opacity-100" : "opacity-0"
+              }`}
+            style={{ objectPosition: slide.objectPosition || "center" }}
+          />
+        ))}
         <div className="absolute inset-0 bg-deepBlue/85 backdrop-blur-[2px]"></div>
       </div>
 
@@ -71,6 +92,19 @@ export function HeroSection() {
             >
               Become a Sponsor
             </Link>
+          </div>
+
+          <div className="mt-8 flex items-center gap-2" aria-label="Hero slides">
+            {homepageHeroSlides.map((slide, index) => (
+              <button
+                key={slide.src}
+                type="button"
+                onClick={() => setActiveSlide(index)}
+                className={`h-2.5 rounded-full transition-all ${index === activeSlide ? "w-8 bg-gold" : "w-2.5 bg-white/60"
+                  }`}
+                aria-label={`Show slide ${index + 1}`}
+              />
+            ))}
           </div>
         </div>
       </div>
