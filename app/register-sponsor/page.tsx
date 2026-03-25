@@ -1,11 +1,24 @@
 import Link from "next/link";
+import Image from "next/image";
 import { Building2Icon, HandshakeIcon, MegaphoneIcon, Clock3Icon } from "lucide-react";
+import { siteImages } from "@/lib/site-images";
 
 export default function SponsorWelcomePage() {
     return (
         <div className="min-h-screen bg-gray-50 py-24 px-4 sm:px-6 lg:px-8">
             <div className="max-w-5xl mx-auto space-y-8">
                 <section className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
+                    <div className="relative h-56 sm:h-72">
+                        <Image
+                            src={siteImages.uoe003.src}
+                            alt={siteImages.uoe003.alt}
+                            fill
+                            priority
+                            sizes="100vw"
+                            className="object-cover"
+                        />
+                        <div className="absolute inset-0 bg-deepBlue/55" />
+                    </div>
                     <div className="bg-deepBlue px-6 sm:px-10 py-8 sm:py-10 text-white">
                         <p className="uppercase tracking-[0.18em] text-xs sm:text-sm text-gold font-semibold mb-2">ABTF 2026 Sponsorship</p>
                         <h1 className="text-3xl sm:text-4xl font-bold font-poppins">Welcome, Prospective Sponsor</h1>
