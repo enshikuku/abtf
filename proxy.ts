@@ -4,7 +4,6 @@ import { jwtVerify } from "jose";
 const secret = new TextEncoder().encode(process.env.JWT_SECRET || "fallback-secret");
 
 const protectedRoutes = ["/dashboard", "/booths", "/invoice-preview", "/payment-proof"];
-const adminRoutes = ["/admin"];
 const authPages = ["/login"];
 
 export async function proxy(request: NextRequest) {
