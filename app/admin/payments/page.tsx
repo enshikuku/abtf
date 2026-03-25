@@ -9,6 +9,8 @@ import {
 	CreditCardIcon,
 	SearchIcon,
 } from "lucide-react";
+import Image from "next/image";
+import { ExportActions } from "@/components/admin/ExportActions";
 
 interface Payment {
 	id: string;
@@ -98,11 +100,32 @@ export default function AdminPaymentsPage() {
 
 	return (
 		<div className="max-w-7xl mx-auto">
-			<div className="mb-6">
-				<h1 className="text-2xl font-bold text-deepBlue font-poppins flex items-center gap-2">
-					<CreditCardIcon className="h-6 w-6 text-maroon" /> Payment Verification
-				</h1>
-				<p className="text-gray-500 mt-1">{payments.length} total payments</p>
+			<div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+				<div>
+					<h1 className="text-2xl font-bold text-deepBlue font-poppins flex items-center gap-2">
+						<CreditCardIcon className="h-6 w-6 text-maroon" /> Payment Verification
+					</h1>
+					<p className="text-gray-500 mt-1">{payments.length} total payments</p>
+				</div>
+				<ExportActions
+					title="ABTF Payment Report"
+					filenameBase="abtf-payments"
+					rows={filtered}
+					metadata={{
+						"Rows Included": filtered.length,
+						"Tab Filter": activeTab,
+					}}
+					columns={[
+						{ header: "Invoice", value: (row) => row.invoice.invoiceNumber },
+						{ header: "Company", value: (row) => row.invoice.user.companyName },
+						{ header: "Method", value: (row) => row.method },
+						{ header: "Transaction Code", value: (row) => row.transactionCode || "-" },
+						{ header: "Invoice Amount", value: (row) => Number(row.invoice.totalAmount).toLocaleString() },
+						{ header: "Payment Status", value: (row) => row.status },
+						{ header: "Invoice Status", value: (row) => row.invoice.status },
+						{ header: "Submitted At", value: (row) => new Date(row.submittedAt).toLocaleString() },
+					]}
+				/>
 			</div>
 
 			{/* Tabs */}
@@ -111,16 +134,14 @@ export default function AdminPaymentsPage() {
 					<button
 						key={tab.key}
 						onClick={() => setActiveTab(tab.key)}
-						className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
-							activeTab === tab.key
-								? tab.color
-								: "text-gray-500 border-transparent hover:text-gray-700"
-						}`}
+						className={`px-4 py-3 text-sm font-medium border-b-2 transition-colors ${activeTab === tab.key
+							? tab.color
+							: "text-gray-500 border-transparent hover:text-gray-700"
+							}`}
 					>
 						{tab.label}{" "}
-						<span className={`ml-1 px-2 py-0.5 rounded-full text-xs ${
-							activeTab === tab.key ? "bg-gray-100" : "bg-gray-50"
-						}`}>
+						<span className={`ml-1 px-2 py-0.5 rounded-full text-xs ${activeTab === tab.key ? "bg-gray-100" : "bg-gray-50"
+							}`}>
 							{tab.count}
 						</span>
 					</button>
@@ -154,11 +175,10 @@ export default function AdminPaymentsPage() {
 								<div className="flex-1 space-y-2">
 									<div className="flex items-center gap-3 flex-wrap">
 										<span className="font-bold text-deepBlue text-lg">{p.invoice.invoiceNumber}</span>
-										<span className={`px-2 py-1 text-xs font-bold rounded-full ${
-											p.status === "SUBMITTED" ? "bg-yellow-100 text-yellow-800" :
+										<span className={`px-2 py-1 text-xs font-bold rounded-full ${p.status === "SUBMITTED" ? "bg-yellow-100 text-yellow-800" :
 											p.status === "VERIFIED" ? "bg-green-100 text-green-800" :
-											"bg-red-100 text-red-800"
-										}`}>
+												"bg-red-100 text-red-800"
+											}`}>
 											{p.status}
 										</span>
 									</div>
@@ -238,9 +258,12 @@ export default function AdminPaymentsPage() {
 							</button>
 						</div>
 						<div className="p-4">
-							<img
+							<Image
 								src={previewImage}
 								alt="Payment proof"
+								width={1400}
+								height={900}
+								unoptimized
 								className="max-w-full max-h-[70vh] object-contain mx-auto"
 							/>
 						</div>
