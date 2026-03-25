@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import { EXHIBITION_CATEGORIES } from "../lib/exhibition-categories";
 
 const prisma = new PrismaClient();
 
@@ -22,33 +23,22 @@ async function main() {
 	});
 	console.log("Admin user created: abtf@uoeld.ac.ke");
 
-	// Define booths per section
-	const exhibitorSections = [
-		{
-			section: "machinery",
-			prefix: "M",
-			count: 8,
-			prices: [15000, 18000, 20000, 25000],
-		},
-		{
-			section: "crops",
-			prefix: "C",
-			count: 8,
-			prices: [10000, 12000, 15000],
-		},
-		{
-			section: "animals",
-			prefix: "A",
-			count: 7,
-			prices: [12000, 14000, 16000],
-		},
-		{
-			section: "food",
-			prefix: "F",
-			count: 7,
-			prices: [8000, 10000, 12000],
-		},
-	];
+	// Define exhibitor booths across all 8 exhibition categories
+	const exhibitorSectionMeta: Record<string, { prefix: string; count: number; prices: number[] }> = {
+		"agricultural-machinery": { prefix: "AM", count: 4, prices: [18000, 20000, 22000, 25000] },
+		"crops-and-seeds": { prefix: "CS", count: 4, prices: [12000, 14000, 16000, 18000] },
+		"livestock-and-animal-production": { prefix: "LA", count: 4, prices: [13000, 15000, 17000, 19000] },
+		"food-and-agro-processing": { prefix: "FP", count: 4, prices: [11000, 13000, 15000, 17000] },
+		"agribusiness-finance-and-insurance": { prefix: "AF", count: 4, prices: [10000, 12000, 14000, 16000] },
+		"regulatory-research-and-learning-institutions": { prefix: "RL", count: 4, prices: [9000, 11000, 13000, 15000] },
+		"cooperatives-msmes-ngos-and-cbos": { prefix: "CN", count: 3, prices: [8000, 10000, 12000] },
+		"environment-and-climate-smart-solutions": { prefix: "EC", count: 3, prices: [10000, 12000, 14000] },
+	};
+
+	const exhibitorSections = EXHIBITION_CATEGORIES.map((category) => ({
+		section: category.slug,
+		...exhibitorSectionMeta[category.slug],
+	})).filter((section) => section.prefix && section.count > 0);
 
 	const sponsorBooths = [
 		{ name: "SP-P-01", section: "platinum", sponsorLevel: "PLATINUM", price: 120000 },
