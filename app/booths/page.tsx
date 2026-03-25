@@ -3,6 +3,13 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Loader2Icon } from "lucide-react";
+import {
+  EXHIBITION_CATEGORIES,
+  SPONSOR_SECTION_LABELS,
+  getBoothSectionDisplay,
+  getExhibitorSectionLabel,
+} from "@/lib/exhibition-categories";
+import { getBoothStatusTheme } from "@/lib/booth-status";
 
 interface Booth {
   id: string;
@@ -13,17 +20,6 @@ interface Booth {
   price: string;
   status: "AVAILABLE" | "RESERVED" | "PAYMENT_SUBMITTED" | "CONFIRMED";
 }
-
-const sectionLabels: Record<string, string> = {
-  machinery: "Machinery Booths",
-  crops: "Crops Booths",
-  animals: "Animal Booths",
-  food: "Food Booths",
-  platinum: "Platinum Sponsor Booths",
-  gold: "Gold Sponsor Booths",
-  silver: "Silver Sponsor Booths",
-  bronze: "Bronze Sponsor Booths",
-};
 
 export default function BoothsPage() {
   const router = useRouter();
@@ -82,28 +78,11 @@ export default function BoothsPage() {
     }
   };
 
-  const sections = Object.keys(sectionLabels);
+  const sections = [
+    ...EXHIBITION_CATEGORIES.map((category) => category.slug),
+    ...Object.keys(SPONSOR_SECTION_LABELS),
+  ].filter((section, index, arr) => arr.indexOf(section) === index);
   const isSponsorFlow = booths.some((b) => b.audience === "SPONSOR");
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "AVAILABLE": return "bg-green-100 text-green-800";
-      case "RESERVED": return "bg-orange-100 text-orange-800";
-      case "PAYMENT_SUBMITTED": return "bg-blue-100 text-blue-800";
-      case "CONFIRMED": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getStatusDot = (status: string) => {
-    switch (status) {
-      case "AVAILABLE": return "bg-green-500";
-      case "RESERVED": return "bg-orange-500";
-      case "PAYMENT_SUBMITTED": return "bg-blue-500";
-      case "CONFIRMED": return "bg-red-500";
-      default: return "bg-gray-500";
-    }
-  };
 
   if (loading) {
     return (
@@ -137,16 +116,16 @@ export default function BoothsPage() {
               <span className="text-xs sm:text-sm font-medium text-gray-700">Available</span>
             </div>
             <div className="flex items-center">
-              <span className="w-3 h-3 rounded-full bg-orange-500 mr-2"></span>
+              <span className="w-3 h-3 rounded-full bg-blue-600 mr-2"></span>
               <span className="text-xs sm:text-sm font-medium text-gray-700">Reserved</span>
             </div>
             <div className="flex items-center">
-              <span className="w-3 h-3 rounded-full bg-blue-500 mr-2"></span>
-              <span className="text-xs sm:text-sm font-medium text-gray-700">Payment Submitted</span>
+              <span className="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
+              <span className="text-xs sm:text-sm font-medium text-gray-700">Booked</span>
             </div>
             <div className="flex items-center">
-              <span className="w-3 h-3 rounded-full bg-red-500 mr-2"></span>
-              <span className="text-xs sm:text-sm font-medium text-gray-700">Confirmed</span>
+              <span className="w-3 h-3 rounded-full bg-amber-500 mr-2"></span>
+              <span className="text-xs sm:text-sm font-medium text-gray-700">Payment Submitted</span>
             </div>
           </div>
         </div>
@@ -164,12 +143,13 @@ export default function BoothsPage() {
             return (
               <div key={section} className="bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-md border border-gray-200">
                 <h2 className="text-xl sm:text-2xl font-bold text-deepBlue font-poppins mb-6 pb-4 border-b border-gray-100">
-                  {sectionLabels[section] || section}
+                  {SPONSOR_SECTION_LABELS[section] || getExhibitorSectionLabel(section)}
                 </h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
                   {sectionBooths.map((booth) => {
                     const isAvailable = booth.status === "AVAILABLE";
                     const isSelected = selected.has(booth.id);
+                    const statusTheme = getBoothStatusTheme(booth.status);
                     return (
                       <div
                         key={booth.id}
@@ -188,15 +168,15 @@ export default function BoothsPage() {
                             </span>
                             <span className="text-sm text-gray-500 font-inter">
                               {booth.audience === "SPONSOR"
-                                ? `${section}${booth.sponsorLevel ? ` (${booth.sponsorLevel})` : ""}`
-                                : section}
+                                ? `${getBoothSectionDisplay(section, booth.audience)}${booth.sponsorLevel ? ` (${booth.sponsorLevel})` : ""}`
+                                : getBoothSectionDisplay(section, booth.audience)}
                             </span>
                           </div>
-                          <span className={`w-3 h-3 rounded-full ${getStatusDot(booth.status)}`}></span>
+                          <span className={`w-3 h-3 rounded-full ${statusTheme.dotClass}`}></span>
                         </div>
                         <div className="mb-6">
-                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-2 ${getStatusColor(booth.status)}`}>
-                            {isSelected ? "Selected" : booth.status === "AVAILABLE" ? "Available" : booth.status === "RESERVED" ? "Reserved" : booth.status === "PAYMENT_SUBMITTED" ? "Payment Submitted" : "Confirmed"}
+                          <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold mb-2 ${statusTheme.badgeClass}`}>
+                            {isSelected ? "Selected" : statusTheme.label}
                           </span>
                           <p className="text-lg font-bold text-gray-800 font-inter">
                             KES {Number(booth.price).toLocaleString()}
