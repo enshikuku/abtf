@@ -1,6 +1,15 @@
 import Link from "next/link";
+import Image from "next/image";
+import { siteImages } from "@/lib/site-images";
 
 export function Sponsors() {
+  const sponsorHighlights = [
+    siteImages.dsc5095,
+    siteImages.dsc4573,
+    siteImages.dsc5133,
+    siteImages.dsc5025,
+  ];
+
   return (
     <section id="sponsors" className="py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -13,6 +22,22 @@ export function Sponsors() {
             We are grateful for the support of our industry partners who make
             this event possible.
           </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-16">
+          {sponsorHighlights.map((image) => (
+            <div key={image.src} className="rounded-xl overflow-hidden border border-gray-200 shadow-sm">
+              <Image
+                src={image.src}
+                alt={image.alt}
+                width={900}
+                height={600}
+                sizes="(max-width: 1024px) 50vw, 25vw"
+                className="w-full h-44 object-cover"
+                style={{ objectPosition: image.objectPosition || "center" }}
+              />
+            </div>
+          ))}
         </div>
 
         {/* Platinum Sponsors */}
