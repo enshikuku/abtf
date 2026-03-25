@@ -14,6 +14,7 @@ import {
 	ClockIcon,
 	AlertCircleIcon,
 	ShieldIcon,
+	MessageSquareTextIcon,
 } from "lucide-react";
 
 interface Stats {
@@ -30,6 +31,8 @@ interface Stats {
 	pendingPayments: number;
 	totalUsers: number;
 	verifiedPayments: number;
+	totalAttendees: number;
+	totalFeedback: number;
 }
 
 export default function AdminDashboardPage() {
@@ -62,21 +65,27 @@ export default function AdminDashboardPage() {
 			{ label: "Exhibitor Booths", value: stats.totalExhibitorBooths, icon: LayoutGridIcon, color: "text-blue-600 bg-blue-50", href: "/admin/booths" },
 			{ label: "Sponsor Booths", value: stats.totalSponsorBooths, icon: LayoutGridIcon, color: "text-purple-600 bg-purple-50", href: "/admin/booths" },
 			{ label: "Available Booths", value: stats.availableBooths, icon: CheckCircleIcon, color: "text-green-600 bg-green-50", href: "/admin/booths" },
-			{ label: "Reserved Booths", value: stats.reservedBooths, icon: ClockIcon, color: "text-orange-600 bg-orange-50", href: "/admin/booths" },
-			{ label: "Confirmed Booths", value: stats.confirmedBooths, icon: CheckCircleIcon, color: "text-emerald-600 bg-emerald-50", href: "/admin/booths" },
+			{ label: "Reserved Booths", value: stats.reservedBooths, icon: ClockIcon, color: "text-blue-600 bg-blue-50", href: "/admin/booths" },
+			{ label: "Booked Booths", value: stats.confirmedBooths, icon: CheckCircleIcon, color: "text-red-600 bg-red-50", href: "/admin/booths" },
 			{ label: "Pending Payments", value: stats.pendingPayments, icon: AlertCircleIcon, color: "text-yellow-600 bg-yellow-50", href: "/admin/payments" },
 			{ label: "Verified Payments", value: stats.verifiedPayments, icon: CreditCardIcon, color: "text-green-600 bg-green-50", href: "/admin/payments" },
 			{ label: "Total Users", value: stats.totalUsers, icon: ShieldIcon, color: "text-indigo-600 bg-indigo-50", href: "/admin/users" },
+			{ label: "Attendee Registrations", value: stats.totalAttendees, icon: UsersIcon, color: "text-cyan-600 bg-cyan-50", href: "/admin/attendees" },
+			{ label: "Feedback Submissions", value: stats.totalFeedback, icon: MessageSquareTextIcon, color: "text-orange-600 bg-orange-50", href: "/admin/feedback" },
 		]
 		: [];
 
 	const quickLinks = [
 		{ name: "Payments", href: "/admin/payments", icon: CreditCardIcon, desc: "Verify payment proofs and manage transactions" },
 		{ name: "Booths", href: "/admin/booths", icon: LayoutGridIcon, desc: "Manage booth assignments and reservations" },
+		{ name: "Reservations", href: "/admin/reservations", icon: ClockIcon, desc: "Review all booth reservation records" },
 		{ name: "Exhibitors", href: "/admin/exhibitors", icon: UsersIcon, desc: "View and manage registered exhibitors" },
 		{ name: "Sponsors", href: "/admin/sponsors", icon: StarIcon, desc: "View and manage registered sponsors" },
 		{ name: "Invoices", href: "/admin/invoices", icon: FileTextIcon, desc: "View all invoices and payment statuses" },
 		{ name: "Users", href: "/admin/users", icon: ShieldIcon, desc: "Manage user accounts and roles" },
+		{ name: "Attendees", href: "/admin/attendees", icon: UsersIcon, desc: "Manage public attendee registrations" },
+		{ name: "Feedback", href: "/admin/feedback", icon: MessageSquareTextIcon, desc: "Review and respond to public feedback" },
+		{ name: "Reports", href: "/admin/reports", icon: BarChart3Icon, desc: "Generate analytics, summaries, and multi-format exports" },
 	];
 
 	return (
