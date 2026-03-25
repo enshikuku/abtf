@@ -1,4 +1,6 @@
+import Image from "next/image";
 import { CheckCircle2Icon } from "lucide-react";
+import { aboutEventGallery, siteImages } from "@/lib/site-images";
 
 export function AboutEvent() {
   const highlights = [
@@ -66,14 +68,17 @@ export function AboutEvent() {
             </div>
           </div>
 
-          {/* Image */}
+          {/* Feature image */}
           <div className="relative">
             <div className="absolute -inset-4 bg-gold/10 rounded-2xl transform rotate-3"></div>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="https://images.unsplash.com/photo-1592982537447-6f2a6a0c6c13?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"
-              alt="Agricultural exhibition"
+            <Image
+              src={siteImages.dsc4992.src}
+              alt={siteImages.dsc4992.alt}
+              width={1200}
+              height={800}
+              sizes="(max-width: 1024px) 100vw, 50vw"
               className="relative rounded-2xl shadow-xl w-full h-[300px] sm:h-[400px] md:h-[500px] object-cover"
+              style={{ objectPosition: siteImages.dsc4992.objectPosition || "center" }}
             />
 
             {/* Floating Stats Card */}
@@ -93,6 +98,36 @@ export function AboutEvent() {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        <div className="mt-20">
+          <div className="mb-8 text-center">
+            <h3 className="text-2xl md:text-3xl font-bold text-deepBlue font-poppins">
+              Event Story in Pictures
+            </h3>
+            <p className="text-gray-600 mt-3 max-w-2xl mx-auto font-inter">
+              From opening ceremony and field demonstrations to technology showcases, livestock, and culture.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {aboutEventGallery.map((photo, index) => (
+              <div
+                key={photo.src}
+                className={`${index === 0 ? "lg:col-span-2 lg:row-span-2" : ""} rounded-xl overflow-hidden border border-gray-200 shadow-sm`}
+              >
+                <Image
+                  src={photo.src}
+                  alt={photo.alt}
+                  width={1200}
+                  height={800}
+                  sizes={index === 0 ? "(max-width: 1024px) 100vw, 50vw" : "(max-width: 1024px) 50vw, 25vw"}
+                  className={`w-full ${index === 0 ? "h-[300px] sm:h-[420px]" : "h-52"} object-cover`}
+                  style={{ objectPosition: photo.objectPosition || "center" }}
+                />
+              </div>
+            ))}
           </div>
         </div>
       </div>
