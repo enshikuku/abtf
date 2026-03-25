@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Loader2Icon, StarIcon, SearchIcon, XCircleIcon } from "lucide-react";
+import { getBoothStatusTheme } from "@/lib/booth-status";
+import { ExportActions } from "@/components/admin/ExportActions";
 
 interface Booth {
 	id: string;
@@ -73,6 +75,9 @@ export default function AdminSponsorsPage() {
 		return colors[status] || "bg-gray-100 text-gray-800";
 	};
 
+	const boothStatusLabel = (status: string) => getBoothStatusTheme(status).label;
+	const boothStatusBadge = (status: string) => getBoothStatusTheme(status).badgeClass;
+
 	if (loading) {
 		return (
 			<div className="flex items-center justify-center py-32">
@@ -83,10 +88,31 @@ export default function AdminSponsorsPage() {
 
 	return (
 		<div className="max-w-7xl mx-auto">
-			<div className="mb-6">
-				<h1 className="text-2xl font-bold text-deepBlue font-poppins flex items-center gap-2">
-					<StarIcon className="h-6 w-6 text-maroon" /> Sponsors ({sponsors.length})
-				</h1>
+			<div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+				<div>
+					<h1 className="text-2xl font-bold text-deepBlue font-poppins flex items-center gap-2">
+						<StarIcon className="h-6 w-6 text-maroon" /> Sponsors ({sponsors.length})
+					</h1>
+				</div>
+				<ExportActions
+					title="ABTF Sponsor Report"
+					filenameBase="abtf-sponsors"
+					rows={filtered}
+					metadata={{
+						"Rows Included": filtered.length,
+						"Sponsor Level Filter": levelFilter,
+					}}
+					columns={[
+						{ header: "Company", value: (row) => row.companyName },
+						{ header: "Contact Person", value: (row) => row.name },
+						{ header: "Email", value: (row) => row.email },
+						{ header: "Phone", value: (row) => row.phone },
+						{ header: "Sponsor Level", value: (row) => row.sponsorLevel || "-" },
+						{ header: "Website", value: (row) => row.website || "-" },
+						{ header: "Booths", value: (row) => row.booths.map((booth) => booth.name).join(", ") || "-" },
+						{ header: "Created At", value: (row) => new Date(row.createdAt).toLocaleString() },
+					]}
+				/>
 			</div>
 
 			{/* Search */}
@@ -275,10 +301,9 @@ export default function AdminSponsorsPage() {
 														{b.section}
 														{b.audience === "SPONSOR" && b.sponsorLevel ? ` (${b.sponsorLevel.toLowerCase()})` : ""}
 													</span>
-													<span className={`px-2 py-0.5 rounded-full text-xs font-bold ${b.status === "CONFIRMED" ? "bg-green-100 text-green-800" :
-														b.status === "RESERVED" ? "bg-orange-100 text-orange-800" :
-															"bg-blue-100 text-blue-800"
-														}`}>{b.status.replace(/_/g, " ")}</span>
+													<span className={`px-2 py-0.5 rounded-full text-xs font-bold ${boothStatusBadge(b.status)}`}>
+														{boothStatusLabel(b.status)}
+													</span>
 												</div>
 											</div>
 										))}
