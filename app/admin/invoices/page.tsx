@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Loader2Icon, FileTextIcon, SearchIcon, XCircleIcon, DownloadIcon } from "lucide-react";
+import { getBoothSectionDisplay } from "@/lib/exhibition-categories";
+import { ExportActions } from "@/components/admin/ExportActions";
 
 interface InvoiceItem {
 	id: string;
@@ -97,7 +99,7 @@ export default function AdminInvoicesPage() {
 		const rows = inv.items.map((item, i) => [
 			String(i + 1),
 			item.booth.name,
-			`${item.booth.section}${item.booth.audience === "SPONSOR" && item.booth.sponsorLevel ? ` (${item.booth.sponsorLevel.toLowerCase()})` : ""}`,
+			`${getBoothSectionDisplay(item.booth.section, item.booth.audience)}${item.booth.audience === "SPONSOR" && item.booth.sponsorLevel ? ` (${item.booth.sponsorLevel})` : ""}`,
 			`KES ${Number(item.price).toLocaleString()}`,
 		]);
 
@@ -109,7 +111,7 @@ export default function AdminInvoicesPage() {
 			headStyles: { fillColor: [102, 0, 0] },
 		});
 
-		const finalY = (doc as any).lastAutoTable?.finalY || 100;
+		const finalY = (doc as typeof doc & { lastAutoTable?: { finalY?: number } }).lastAutoTable?.finalY || 100;
 		doc.setFontSize(13);
 		doc.setTextColor(102, 0, 0);
 		doc.text(`Total: KES ${Number(inv.totalAmount).toLocaleString()}`, 14, finalY + 14);
@@ -134,10 +136,31 @@ export default function AdminInvoicesPage() {
 
 	return (
 		<div className="max-w-7xl mx-auto">
-			<div className="mb-6">
-				<h1 className="text-2xl font-bold text-deepBlue font-poppins flex items-center gap-2">
-					<FileTextIcon className="h-6 w-6 text-maroon" /> Invoices ({invoices.length})
-				</h1>
+			<div className="mb-6 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+				<div>
+					<h1 className="text-2xl font-bold text-deepBlue font-poppins flex items-center gap-2">
+						<FileTextIcon className="h-6 w-6 text-maroon" /> Invoices ({invoices.length})
+					</h1>
+				</div>
+				<ExportActions
+					title="ABTF Invoice Report"
+					filenameBase="abtf-invoices"
+					rows={filtered}
+					metadata={{
+						"Rows Included": filtered.length,
+						"Status Filter": filterStatus,
+					}}
+					columns={[
+						{ header: "Invoice Number", value: (row) => row.invoiceNumber },
+						{ header: "Company", value: (row) => row.user.companyName },
+						{ header: "Email", value: (row) => row.user.email },
+						{ header: "Booths", value: (row) => row.items.map((i) => i.booth.name).join(", ") },
+						{ header: "Total Amount", value: (row) => Number(row.totalAmount).toLocaleString() },
+						{ header: "Status", value: (row) => row.status },
+						{ header: "Latest Payment", value: (row) => row.payments[0]?.status || "NO_PAYMENT" },
+						{ header: "Created At", value: (row) => new Date(row.createdAt).toLocaleString() },
+					]}
+				/>
 			</div>
 
 			{/* Filters */}
@@ -209,8 +232,8 @@ export default function AdminInvoicesPage() {
 											<td className="px-4 py-3">
 												{latestPayment ? (
 													<span className={`px-2 py-1 rounded-full text-xs font-bold ${latestPayment.status === "VERIFIED" ? "bg-green-100 text-green-800" :
-															latestPayment.status === "SUBMITTED" ? "bg-yellow-100 text-yellow-800" :
-																"bg-red-100 text-red-800"
+														latestPayment.status === "SUBMITTED" ? "bg-yellow-100 text-yellow-800" :
+															"bg-red-100 text-red-800"
 														}`}>
 														{latestPayment.status}
 													</span>
@@ -307,9 +330,9 @@ export default function AdminInvoicesPage() {
 											<tr key={item.id}>
 												<td className="px-3 py-2">{i + 1}</td>
 												<td className="px-3 py-2 font-medium text-deepBlue">{item.booth.name}</td>
-												<td className="px-3 py-2 capitalize">
-													{item.booth.section}
-													{item.booth.audience === "SPONSOR" && item.booth.sponsorLevel ? ` (${item.booth.sponsorLevel.toLowerCase()})` : ""}
+												<td className="px-3 py-2">
+													{getBoothSectionDisplay(item.booth.section, item.booth.audience)}
+													{item.booth.audience === "SPONSOR" && item.booth.sponsorLevel ? ` (${item.booth.sponsorLevel})` : ""}
 												</td>
 												<td className="px-3 py-2 text-right">KES {Number(item.price).toLocaleString()}</td>
 											</tr>
@@ -340,8 +363,8 @@ export default function AdminInvoicesPage() {
 													</p>
 												</div>
 												<span className={`px-2 py-0.5 rounded-full text-xs font-bold ${p.status === "VERIFIED" ? "bg-green-100 text-green-800" :
-														p.status === "SUBMITTED" ? "bg-yellow-100 text-yellow-800" :
-															"bg-red-100 text-red-800"
+													p.status === "SUBMITTED" ? "bg-yellow-100 text-yellow-800" :
+														"bg-red-100 text-red-800"
 													}`}>
 													{p.status}
 												</span>
