@@ -2,11 +2,18 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
+import { siteImages } from "@/lib/site-images";
+import {
+    EXHIBITION_CATEGORIES,
+    getExhibitionCategoryDescription,
+} from "@/lib/exhibition-categories";
 
 export default function RegisterExhibitorFormPage() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("");
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -67,6 +74,17 @@ export default function RegisterExhibitorFormPage() {
                     <p className="text-gray-300 mt-2 font-inter">
                         Complete your registration through your company&apos;s nominated representative.
                     </p>
+                </div>
+
+                <div className="relative h-44 sm:h-52">
+                    <Image
+                        src={siteImages.uoe002.src}
+                        alt={siteImages.uoe002.alt}
+                        fill
+                        sizes="(max-width: 1024px) 100vw, 768px"
+                        className="object-cover"
+                    />
+                    <div className="absolute inset-0 bg-deepBlue/35" />
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-4 sm:p-6 md:p-8 space-y-6">
@@ -158,17 +176,24 @@ export default function RegisterExhibitorFormPage() {
                         <select
                             required
                             name="category"
+                            value={selectedCategory}
+                            onChange={(e) => setSelectedCategory(e.target.value)}
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-maroon focus:border-maroon bg-white"
-                            defaultValue=""
                         >
                             <option value="" disabled>
                                 Select a category
                             </option>
-                            <option value="machinery">Machinery</option>
-                            <option value="crops">Crops</option>
-                            <option value="animals">Animals</option>
-                            <option value="food">Food</option>
+                            {EXHIBITION_CATEGORIES.map((category) => (
+                                <option key={category.slug} value={category.slug}>
+                                    {category.name}
+                                </option>
+                            ))}
                         </select>
+                        {selectedCategory && (
+                            <p className="text-xs text-gray-600 mt-2 leading-relaxed">
+                                {getExhibitionCategoryDescription(selectedCategory)}
+                            </p>
+                        )}
                     </div>
 
                     <div>
