@@ -19,7 +19,7 @@ export function BoothSelection() {
       case "Available":
         return "bg-green-100 text-green-800 border-green-200";
       case "Reserved":
-        return "bg-orange-100 text-orange-800 border-orange-200";
+        return "bg-blue-100 text-blue-800 border-blue-200";
       case "Booked":
         return "bg-red-100 text-red-800 border-red-200";
       default:
@@ -32,7 +32,7 @@ export function BoothSelection() {
       case "Available":
         return "bg-green-500";
       case "Reserved":
-        return "bg-orange-500";
+        return "bg-blue-600";
       case "Booked":
         return "bg-red-500";
       default:
@@ -63,7 +63,7 @@ export function BoothSelection() {
               <span className="text-sm font-medium text-gray-700">Available</span>
             </div>
             <div className="flex items-center">
-              <span className="w-3 h-3 rounded-full bg-orange-500 mr-2"></span>
+              <span className="w-3 h-3 rounded-full bg-blue-600 mr-2"></span>
               <span className="text-sm font-medium text-gray-700">Reserved</span>
             </div>
             <div className="flex items-center">
@@ -89,7 +89,7 @@ export function BoothSelection() {
                 key={booth.id}
                 className={`relative p-4 rounded-lg border-2 text-left transition-all duration-200 flex flex-col h-32
                   ${booth.status === "Available" ? "bg-white border-gray-200" : ""}
-                  ${booth.status === "Reserved" ? "bg-orange-50/50 border-orange-200" : ""}
+                  ${booth.status === "Reserved" ? "bg-blue-50/50 border-blue-200" : ""}
                   ${booth.status === "Booked" ? "bg-gray-50 border-gray-200 opacity-60" : ""}
                 `}
               >
